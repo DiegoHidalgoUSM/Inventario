@@ -21,12 +21,22 @@
             <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required></li>
             <li>
             <label for="responsable">Responsable</label>
-            <input type="text" id="responsable" name="responsable" required></li>
+            <input type="text" id="responsable" name="responsable" required>
+            <input type="checkbox" id="responsable_checkbox" name="responsable_checkbox">
+            <select id="responsable" name="responsable" required>
+                {% for responsable in responsables %}
+                    <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
+                {% endfor %}
+            </select>
+            </li>
             <li>
             <label for="carrera">Carrera Asociada</label>
+            <input type="text" id="carrera" name="carrera" required>
+            <input type="checkbox" id="carrera_checkbox" name="carrera_checkbox">
             <select id="carrera" name="carrera" required>
-                <option value="ingenieria_informatica">Ingeniería en Informática</option>
-                <option value="tecnico_informatica">Técnico en Informática</option>
+                {% for carrera in carreras %}
+                    <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                {% endfor %}
             </select></li>
             <li>
             <label for="ubicacion">Ubicación</label>
