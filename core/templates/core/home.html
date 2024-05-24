@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bienvenido</title>
 </head>
 <body>
-    <h1>hola</h1>
+    <h2>Bienvenido, {{ user.username }}</h2>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+    <button onclick="window.location.href='{% url 'admin:index'%}'">Ir a Admin</button>
+
+    <ul>
+        <li><label for="listar">Listar</label><button id="listar" type="button"onclick="window.location.href='{% url 'lista'%}'">Listar</button></li>
+        <li><label for="anadir">Añadir</label><button id="anadir" type="button"onclick="window.location.href='{% url 'añadir'%}'">Añadir</button></li>
+        <li><label for="importar">Importar</label><button id="importar" type="button"onclick="window.location.href='{% url 'importar'%}'" >Importar</button></li>
+        <li><label for="descargar">Descargar</label><button id="descargar" type="button"onclick="window.location.href='{% url 'descargar'%}'">Descargar</button></li>
+    </ul>
 </body>
 </html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir a la lista</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Añadir a la lista</h1>
+        <form method="POST" action="{% url 'añadir' %}">
+            {% csrf_token %}
+            <li>
+            <label for="etiqueta">Etiqueta</label>
+            <input type="text" id="etiqueta" name="etiqueta" required></li>
+            <li>
+            <label for="numero_serie">Número de Serie</label>
+            <input type="text" id="numero_serie" name="numero_serie" required></li>
+            <li>
+            <label for="descripcion_equipamiento">Descripción del Equipamiento</label>
+            <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required></li>
+            <li>
+            <label for="responsable">Responsable</label>
+            <input type="text" id="responsable" name="responsable" required></li>
+            <li>
+            <label for="carrera">Carrera Asociada</label>
+            <select id="carrera" name="carrera" required>
+                <option value="ingenieria_informatica">Ingeniería en Informática</option>
+                <option value="tecnico_informatica">Técnico en Informática</option>
+            </select></li>
+            <li>
+            <label for="ubicacion">Ubicación</label>
+            <input type="text" id="ubicacion" name="ubicacion" required></li>
+            <li>
+            <label for="observacion">Observación</label>
+            <input type="text" id="observacion" name="observacion"></li>
+            <li>
+            <label for="digitador">Digitador</label>
+            <input type="text" id="digitador" name="digitador" required value="{{ user.username }}" readonly></li>
+            
+            <button type="submit">Añadir</button>
+        </form>
+    </div>
+</body>
+</html>
