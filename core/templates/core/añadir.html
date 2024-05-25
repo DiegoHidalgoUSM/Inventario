@@ -4,52 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Añadir a la lista</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Añadir a la lista</h1>
         <form method="POST" action="{% url 'añadir' %}">
             {% csrf_token %}
-            <li>
-            <label for="etiqueta">Etiqueta</label>
-            <input type="text" id="etiqueta" name="etiqueta" required></li>
-            <li>
-            <label for="numero_serie">Número de Serie</label>
-            <input type="text" id="numero_serie" name="numero_serie" required></li>
-            <li>
-            <label for="descripcion_equipamiento">Descripción del Equipamiento</label>
-            <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required></li>
-            <li>
-            <label for="responsable">Responsable</label>
-            <input type="text" id="responsable" name="responsable" required>
-            <input type="checkbox" id="responsable_checkbox" name="responsable_checkbox">
-            <select id="responsable" name="responsable" required>
-                {% for responsable in responsables %}
-                    <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
-                {% endfor %}
-            </select>
-            </li>
-            <li>
-            <label for="carrera">Carrera Asociada</label>
-            <input type="text" id="carrera" name="carrera" required>
-            <input type="checkbox" id="carrera_checkbox" name="carrera_checkbox">
-            <select id="carrera" name="carrera" required>
-                {% for carrera in carreras %}
-                    <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-                {% endfor %}
-            </select></li>
-            <li>
-            <label for="ubicacion">Ubicación</label>
-            <input type="text" id="ubicacion" name="ubicacion" required></li>
-            <li>
-            <label for="observacion">Observación</label>
-            <input type="text" id="observacion" name="observacion"></li>
-            <li>
-            <label for="digitador">Digitador</label>
-            <input type="text" id="digitador" name="digitador" required value="{{ user.username }}" readonly></li>
-            
+            <ul>
+                <li>
+                    <label for="etiqueta">Etiqueta</label>
+                    <input type="text" id="etiqueta" name="etiqueta" required>
+                </li>
+                <li>
+                    <label for="numero_serie">Número de Serie</label>
+                    <input type="text" id="numero_serie" name="numero_serie" required>
+                </li>
+                <li>
+                    <label for="descripcion_equipamiento">Descripción del Equipamiento</label>
+                    <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required>
+                </li>
+                <li>
+                    <label for="responsable">Responsable</label>
+                    <select id="responsable" name="responsable" required>
+                        {% for responsable in responsables %}
+                            <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" onclick="abrirModal('responsable')">Añadir Responsable</button>
+                </li>
+                <li>
+                    <label for="carrera">Carrera Asociada</label>
+                    <select id="carrera" name="carrera" required>
+                        {% for carrera in carreras %}
+                            <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" onclick="abrirModal('carrera')">Añadir Carrera</button>
+                </li>
+                <li>
+                    <label for="ubicacion">Ubicacion</label>
+                    <select id="ubicacion" name="ubicacion" required>
+                        {% for ubicacion in ubicaciones %}
+                            <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" onclick="abrirModal('ubicacion')">Añadir ubicacion</button>
+                </li>
+                <li>
+                    <label for="observacion">Observación</label>
+                    <input type="text" id="observacion" name="observacion">
+                </li>
+                <li>
+                    <label for="digitador">Digitador</label>
+                    <input type="text" id="digitador" name="digitador" required value="{{ user.username }}" readonly>
+                </li>
+            </ul>
             <button type="submit">Añadir</button>
         </form>
     </div>
+
+    <div id="modalResponsable" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal('responsable')">&times;</span>
+            <h2>Añadir Nuevo Responsable</h2>
+            <form id="formResponsable" method="POST" action="{% url 'añadir_responsable' %}">
+                {% csrf_token %}
+                <label for="nuevo_responsable">Nombre del Responsable</label>
+                <input type="text" id="nuevo_responsable" name="nuevo_responsable" required>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalCarrera" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal('carrera')">&times;</span>
+            <h2>Añadir Nueva Carrera</h2>
+            <form id="formCarrera" method="POST" action="{% url 'añadir_carrera' %}">
+                {% csrf_token %}
+                <label for="nueva_carrera">Nombre de la Carrera</label>
+                <input type="text" id="nueva_carrera" name="nueva_carrera" required>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+    <div id="modalUbicacion" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal('ubicacion')">&times;</span>
+            <h2>Añadir Nueva Ubicacion</h2>
+            <form id="formUbicacion" method="POST" action="{% url 'añadir_ubicacion' %}">
+                {% csrf_token %}
+                <label for="nueva_ubicacion">Nueva ubicacion</label>
+                <input type="text" id="nueva_ubicacion" name="nueva_ubicacion" required>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(tipo) {
+            document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'block';
+        }
+
+        function cerrarModal(tipo) {
+            document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'none';
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    </script>
 </body>
 </html>

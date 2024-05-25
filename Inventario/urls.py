@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.views import index,IngresoUsuario,logout_view,lista,añadir,importar,descargar,exito
+from core.views import index,IngresoUsuario,logout_view,lista,añadir,importar,descargar,exito,añadir_carrera,añadir_responsable,añadir_ubicacion
 
 urlpatterns = [
     path("",index),
@@ -29,5 +29,8 @@ urlpatterns = [
     path("importar/",importar,name="importar"),
     path("descargar/",descargar,name="descargar"),
     path("exito/",exito,name="exito"),
+    path("añadir_responsable/",añadir_responsable,name="añadir_responsable"),
+    path("añadir_carrera/",añadir_carrera,name="añadir_carrera"),
+    path("añadir_ubicacion/",añadir_ubicacion,name="añadir_ubicacion"),
     path('admin/', admin.site.urls),
 ]

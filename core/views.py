@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib import messages
-from core.models import Inventario,Responsables,Carreras
+from core.models import Inventario,Responsable,Carrera,Ubicacion
 
 def IngresoUsuario(request):
     if request.method == "POST":
@@ -39,32 +39,38 @@ def lista(request):
     else:
         return redirect('/login/')
 
-    
-from django.shortcuts import render, redirect
-from .models import inventario, Responsables
-
 def añadir(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
+        #metodo post
             etiqueta = request.POST.get('etiqueta')
             numero_serie = request.POST.get('numero_serie')
             descripcion = request.POST.get('descripcion_equipamiento')
-            responsable = request.POST.get('responsable')
-            carrera= request.POST.get('carrera')
-            ubicacion = request.POST.get('ubicacion')
+            responsable_id = request.POST.get('responsable')
+            carrera_id = request.POST.get('carrera')
+            ubicacion_id = request.POST.get('ubicacion')
             observacion = request.POST.get('observacion')
-            responsable_caja = request.POST.get('responsable_checkbox')
-            carrera_caja = request.POST.get('carrera_checkbox')
-            if responsable_caja:
-                nuevo_responsable = Responsables(nombre=responsable)
-                nuevo_responsable.save()
-            
-            if carrera_caja:
-                nueva_Carrera=Carreras(nombre=carrera)
-                nueva_Carrera.save()
+            nuevo_responsable = request.POST.get('nuevo_responsable')
+            nueva_carrera = request.POST.get('nueva_carrera')
+            nueva_ubicacion = request.POST.get('nueva_ubicacion')
 
-            carrera = carreras.objects.get(id=carrera)
-
+        #si existe el nuevo responsable
+            if nuevo_responsable:
+                responsable = Responsable.objects.create(nombre=nuevo_responsable)
+            else:
+                responsable = Responsable.objects.get(id=responsable_id)
+        #si existe la nueva carrera
+            if nueva_carrera:
+                carrera = Carrera.objects.create(nombre=nueva_carrera)
+            else:
+                carrera = Carrera.objects.get(id=carrera_id)
+        #si existe la nueva ubicacion
+            if nueva_ubicacion:
+                ubicacion = Ubicacion.objects.create(nombre=nueva_ubicacion)
+            else:
+                ubicacion = Ubicacion.objects.get(id=ubicacion_id)
+                
+        #incluir a la lista
             nuevo_objeto = Inventario(
                 Etiqueta=etiqueta,
                 Numero_Serie=numero_serie,
@@ -79,11 +85,13 @@ def añadir(request):
 
             return redirect('/exito/')
         else:
-            responsables = Responsables.objects.all()
-            carreras = carreras.objects.all()
+            responsables = Responsable.objects.all()
+            carreras = Carrera.objects.all()
+            ubicaciones=Ubicacion.objects.all()
             context = {
                 'responsables': responsables,
                 'carreras': carreras,
+                'ubicaciones': ubicaciones,
                 'user': request.user,
             }
             return render(request, "core/añadir.html", context)
@@ -106,5 +114,34 @@ def descargar(request):
 def exito(request):
     if request.user.is_authenticated:
         return render(request,"core/exito.html", {'user': request.user})
+    else:
+        return redirect('/login/')
+    
+def añadir_responsable(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            nombre = request.POST.get('nuevo_responsable')
+            nuevo_responsable = Responsable(nombre=nombre)
+            nuevo_responsable.save()
+        return redirect('/añadir/') 
+    else:
+        return redirect('/login/')
+def añadir_ubicacion(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            nombre = request.POST.get('nueva_ubicacion')
+            nueva_ubicacion = Ubicacion(nombre=nombre)
+            nueva_ubicacion.save()
+        return redirect('/añadir/')  
+    else:
+        return redirect('/login/')
+    
+def añadir_carrera(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            nombre = request.POST.get('nueva_carrera')
+            nueva_carrera = Carrera(nombre=nombre)
+            nueva_carrera.save()
+        return redirect('/añadir/')  
     else:
         return redirect('/login/')
