@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar</title>
+    <title>Importar desde Excel</title>
 </head>
 <body>
-    <h1>importar EXCEL a la base de datos</h1>
+    <h1>Importar desde Excel</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Importar</button>
+    </form>
+    <a href="/descargar/"><button>Descargar Excel de Ejemplo</button></a>
 </body>
 </html>

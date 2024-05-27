@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.views import index,IngresoUsuario,logout_view,lista,añadir,importar,descargar,exito,añadir_carrera,añadir_responsable,añadir_ubicacion
+from core.views import index,IngresoUsuario,logout_view,lista,añadir,importar,descargar,exito,añadir_carrera,descargar_activos,añadir_responsable,añadir_ubicacion,error,error_archivo
 
 urlpatterns = [
     path("",index),
@@ -32,5 +32,8 @@ urlpatterns = [
     path("añadir_responsable/",añadir_responsable,name="añadir_responsable"),
     path("añadir_carrera/",añadir_carrera,name="añadir_carrera"),
     path("añadir_ubicacion/",añadir_ubicacion,name="añadir_ubicacion"),
+    path("error/",error,name="error"),
+    path("error_archivo/",error_archivo,name="error_archivo"),
+    path("descargar_activos/",descargar_activos,name="descargar_activos"),
     path('admin/', admin.site.urls),
 ]

@@ -3,29 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Inventario</title>
+    <title>Lista de Activos</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .filtroMensaje {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Lista de Inventario</h1>
+    <h1><a href="/home/">Lista de Activos</a></h1>
+    
     {% if user.is_authenticated %}
-        <p>Bienvenido, {{ user.username }}!</p>
+
+        <button class="filtroMensaje" onclick="abrirModal('filtro')">Filtrar</button>
+
+        <div id="modalFiltro" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="cerrarModal('filtro')">&times;</span>
+                <h2>Filtrar por:</h2>
+                <form method="GET" action="">
+                    <div>
+                    <label><input type="checkbox" name="filtro" value="Etiqueta"> Etiqueta</label>
+                    <label><input type="checkbox" name="filtro" value="Numero_Serie"> N° Serie</label>
+                    <label><input type="checkbox" name="filtro" value="Descripcion_Equipamiento"> Descripcion_Equipamiento</label>
+                    <label><input type="checkbox" name="filtro" value="Responsable"> Responsable</label>
+                    <label><input type="checkbox" name="filtro" value="Carrera"> Carrera asociada</label>
+                    <label><input type="checkbox" name="filtro" value="Ubicacion"> Ubicacion</label>
+                    <label><input type="checkbox" name="filtro" value="Digitador"> Digitador</label>
+                    </div>
+                    <div>
+                        <label for="buscar">Buscar:</label>
+                        <input type="text" id="buscar" name="buscar">
+                    </div>
+                    <button type="submit">Aceptar</button>
+                </form>
+            </div>
+        </div>
+        
+
         <ul>
-            {% for item in listado %}
-                <li>
-                    <strong>Etiqueta:</strong> {{ item.Etiqueta }}<br>
-                    <strong>Número de Serie:</strong> {{ item.Numero_Serie }}<br>
-                    <strong>Descripción:</strong> {{ item.Descripcion_Equipamiento }}<br>
-                    <strong>Responsable:</strong> {{ item.Responsable }}<br>
-                    <strong>Carrera:</strong> {{ item.Carrera }}<br>
-                    <strong>Ubicación:</strong> {{ item.Ubicacion }}<br>
-                    <strong>Observación:</strong> {{ item.Observacion }}<br>
-                    <strong>Digitador:</strong> {{ item.Digitador }}<br>
-                    <BR>
-                </li>
-            {% endfor %}
+            {% if listado %}
+                {% for item in listado %}
+                    <li>
+                        <strong>Etiqueta:</strong> {{ item.Etiqueta }}<br>
+                        <strong>Número de Serie:</strong> {{ item.Numero_Serie }}<br>
+                        <strong>Descripción:</strong> {{ item.Descripcion_Equipamiento }}<br>
+                        <strong>Responsable:</strong> {{ item.Responsable }}<br>
+                        <strong>Carrera:</strong> {{ item.Carrera }}<br>
+                        <strong>Ubicación:</strong> {{ item.Ubicacion }}<br>
+                        <strong>Observación:</strong> {{ item.Observacion }}<br>
+                        <strong>Digitador:</strong> {{ item.Digitador }}<br>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <p>La lista está vacía.</p>
+            {% endif %}
         </ul>
     {% else %}
         <p>Debes iniciar sesión para ver esta página.</p>
     {% endif %}
+
+    <script>
+        function abrirModal(tipo) {
+            document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'block';
+        }
+
+        function cerrarModal(tipo) {
+            document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'none';
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    </script>
 </body>
 </html>

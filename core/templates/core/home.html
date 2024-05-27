@@ -16,8 +16,10 @@
     <ul>
         <li><label for="listar">Listar</label><button id="listar" type="button"onclick="window.location.href='{% url 'lista'%}'">Listar</button></li>
         <li><label for="anadir">Añadir</label><button id="anadir" type="button"onclick="window.location.href='{% url 'añadir'%}'">Añadir</button></li>
-        <li><label for="importar">Importar</label><button id="importar" type="button"onclick="window.location.href='{% url 'importar'%}'" >Importar</button></li>
-        <li><label for="descargar">Descargar</label><button id="descargar" type="button"onclick="window.location.href='{% url 'descargar'%}'">Descargar</button></li>
+        <li><label for="importar">Importar</label><button id="importar" type="button"onclick="window.location.href='{% url 'importar'%}'" >Importar</button></li>  
+        <li><label for="descargar">Descargar Activos</label><button id="descargar" type="button" onclick="window.location.href='{% url 'descargar_activos'%}'" >Descargar Activos</button></li>
+        
+        
     </ul>
 </body>
 </html>

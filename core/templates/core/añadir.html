@@ -37,66 +37,95 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Añadir a la lista</h1>
-        <form method="POST" action="{% url 'añadir' %}">
+        <form id="formulario" method="POST" action="{% url 'añadir' %}">
             {% csrf_token %}
-            <ul>
-                <li>
-                    <label for="etiqueta">Etiqueta</label>
-                    <input type="text" id="etiqueta" name="etiqueta" required>
-                </li>
-                <li>
-                    <label for="numero_serie">Número de Serie</label>
-                    <input type="text" id="numero_serie" name="numero_serie" required>
-                </li>
-                <li>
-                    <label for="descripcion_equipamiento">Descripción del Equipamiento</label>
-                    <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required>
-                </li>
-                <li>
-                    <label for="responsable">Responsable</label>
-                    <select id="responsable" name="responsable" required>
-                        {% for responsable in responsables %}
-                            <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" onclick="abrirModal('responsable')">Añadir Responsable</button>
-                </li>
-                <li>
-                    <label for="carrera">Carrera Asociada</label>
-                    <select id="carrera" name="carrera" required>
-                        {% for carrera in carreras %}
-                            <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" onclick="abrirModal('carrera')">Añadir Carrera</button>
-                </li>
-                <li>
-                    <label for="ubicacion">Ubicacion</label>
-                    <select id="ubicacion" name="ubicacion" required>
-                        {% for ubicacion in ubicaciones %}
-                            <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" onclick="abrirModal('ubicacion')">Añadir ubicacion</button>
-                </li>
-                <li>
-                    <label for="observacion">Observación</label>
-                    <input type="text" id="observacion" name="observacion">
-                </li>
-                <li>
-                    <label for="digitador">Digitador</label>
-                    <input type="text" id="digitador" name="digitador" required value="{{ user.username }}" readonly>
-                </li>
-            </ul>
-            <button type="submit">Añadir</button>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- Primera sección: Responsable, Carrera y Ubicación -->
+            <div id="seccion1" class="section active">
+                <ul>
+                    <li>
+                        <label for="responsable">Responsable</label>
+                        <select id="responsable" name="responsable" required>
+                            {% for responsable in responsables %}
+                                <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" onclick="abrirModal('responsable')">Añadir Responsable</button>
+                    </li>
+                    <li>
+                        <label for="carrera">Carrera Asociada</label>
+                        <select id="carrera" name="carrera" required>
+                            {% for carrera in carreras %}
+                                <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" onclick="abrirModal('carrera')">Añadir Carrera</button>
+                    </li>
+                    <li>
+                        <label for="ubicacion">Ubicación</label>
+                        <select id="ubicacion" name="ubicacion" required>
+                            {% for ubicacion in ubicaciones %}
+                                <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" onclick="abrirModal('ubicacion')">Añadir Ubicación</button>
+                    </li>
+                </ul>
+                <button type="button" onclick="mostrarSeccion2()">Siguiente</button>
+            </div>
+            
+            <!-- Segunda sección: Activo, N. Serie, Etiqueta y Observación -->
+            <div id="seccion2" class="section">
+                <ul>
+                    <li>
+                        <label for="etiqueta">Etiqueta</label>
+                        <input type="text" id="etiqueta" name="etiqueta" required>
+                    </li>
+                    <li>
+                        <label for="numero_serie">Número de Serie</label>
+                        <input type="text" id="numero_serie" name="numero_serie" required>
+                    </li>
+                    <li>
+                        <label for="descripcion_equipamiento">Descripción del Equipamiento</label>
+                        <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required>
+                    </li>
+                    <li>
+                        <label for="observacion">Observación</label>
+                        <input type="text" id="observacion" name="observacion">
+                    </li>
+                    <li>
+                        <label for="digitador">Digitador</label>
+                        <input type="text" id="digitador" name="digitador" required value="{{ user.username }}" readonly>
+                    </li>
+                </ul>
+                <button type="button" onclick="mostrarSeccion1()">Anterior</button>
+                <button type="submit">Añadir</button>
+            </div>
         </form>
     </div>
 
+    <!-- Modal Responsable -->
     <div id="modalResponsable" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModal('responsable')">&times;</span>
@@ -110,6 +139,7 @@
         </div>
     </div>
 
+    <!-- Modal Carrera -->
     <div id="modalCarrera" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModal('carrera')">&times;</span>
@@ -122,13 +152,15 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal Ubicación -->
     <div id="modalUbicacion" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModal('ubicacion')">&times;</span>
-            <h2>Añadir Nueva Ubicacion</h2>
+            <h2>Añadir Nueva Ubicación</h2>
             <form id="formUbicacion" method="POST" action="{% url 'añadir_ubicacion' %}">
                 {% csrf_token %}
-                <label for="nueva_ubicacion">Nueva ubicacion</label>
+                <label for="nueva_ubicacion">Nueva ubicación</label>
                 <input type="text" id="nueva_ubicacion" name="nueva_ubicacion" required>
                 <button type="submit">Guardar</button>
             </form>
@@ -146,6 +178,16 @@
 
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function mostrarSeccion2() {
+            document.getElementById('seccion1').classList.remove('active');
+            document.getElementById('seccion2').classList.add('active');
+        }
+
+        function mostrarSeccion1() {
+            document.getElementById('seccion2').classList.remove('active');
+            document.getElementById('seccion1').classList.add('active');
         }
     </script>
 </body>
