@@ -44,25 +44,23 @@
     </style>
 </head>
 <body>
-    <h1><a href="/home/">Lista de Activos</a></h1>
-    
     {% if user.is_authenticated %}
-
+    <h1>Buscar por: {{ termino_busqueda }}</h1>
         <button class="filtroMensaje" onclick="abrirModal('filtro')">Filtrar</button>
 
         <div id="modalFiltro" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="cerrarModal('filtro')">&times;</span>
                 <h2>Filtrar por:</h2>
-                <form method="GET" action="">
+                <form id="filtroForm" onsubmit="guardarFiltros(event)">
                     <div>
-                    <label><input type="checkbox" name="filtro" value="Etiqueta"> Etiqueta</label>
-                    <label><input type="checkbox" name="filtro" value="Numero_Serie"> N° Serie</label>
-                    <label><input type="checkbox" name="filtro" value="Descripcion_Equipamiento"> Descripcion_Equipamiento</label>
-                    <label><input type="checkbox" name="filtro" value="Responsable"> Responsable</label>
-                    <label><input type="checkbox" name="filtro" value="Carrera"> Carrera asociada</label>
-                    <label><input type="checkbox" name="filtro" value="Ubicacion"> Ubicacion</label>
-                    <label><input type="checkbox" name="filtro" value="Digitador"> Digitador</label>
+                        <label><input type="checkbox" name="filtro" value="Etiqueta"> Etiqueta</label>
+                        <label><input type="checkbox" name="filtro" value="Numero_Serie"> N° Serie</label>
+                        <label><input type="checkbox" name="filtro" value="Descripcion_Equipamiento"> Descripcion_Equipamiento</label>
+                        <label><input type="checkbox" name="filtro" value="Responsable"> Responsable</label>
+                        <label><input type="checkbox" name="filtro" value="Carrera"> Carrera asociada</label>
+                        <label><input type="checkbox" name="filtro" value="Ubicacion"> Ubicacion</label>
+                        <label><input type="checkbox" name="filtro" value="Digitador"> Digitador</label>
                     </div>
                     <div>
                         <label for="buscar">Buscar:</label>
@@ -72,21 +70,25 @@
                 </form>
             </div>
         </div>
-        
 
+        <a href="#" onclick="exportarExcel()">Descargar Lista Auxiliar</a>
+    
         <ul>
             {% if listado %}
                 {% for item in listado %}
-                    <li>
-                        <strong>Etiqueta:</strong> {{ item.Etiqueta }}<br>
-                        <strong>Número de Serie:</strong> {{ item.Numero_Serie }}<br>
-                        <strong>Descripción:</strong> {{ item.Descripcion_Equipamiento }}<br>
-                        <strong>Responsable:</strong> {{ item.Responsable }}<br>
-                        <strong>Carrera:</strong> {{ item.Carrera }}<br>
-                        <strong>Ubicación:</strong> {{ item.Ubicacion }}<br>
-                        <strong>Observación:</strong> {{ item.Observacion }}<br>
-                        <strong>Digitador:</strong> {{ item.Digitador }}<br>
-                    </li>
+                <li>
+                    <strong>Etiqueta:</strong> {{ item.Etiqueta }}<br>
+                    <strong>Número de Serie:</strong> {{ item.Numero_Serie }}<br>
+                    <strong>Descripción:</strong> {{ item.Descripcion_Equipamiento }}<br>
+                    <strong>Responsable:</strong> {{ item.Responsable }}<br>
+                    <strong>Carrera:</strong> {{ item.Carrera }}<br>
+                    <strong>Ubicación:</strong> {{ item.Ubicacion }}<br>
+                    <strong>Observación:</strong> {{ item.Observacion }}<br>
+                    <strong>Digitador:</strong> {{ item.Digitador }}<br>
+                    <button onclick="modificarItem({{ item.id }})">Modificar</button>
+                    <button onclick="eliminarItem({{ item.id }})">Eliminar</button>
+                    <br><br>
+                </li>
                 {% endfor %}
             {% else %}
                 <p>La lista está vacía.</p>
@@ -108,6 +110,55 @@
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
+
+        function guardarFiltros(event) {
+            event.preventDefault();
+            var filtros = [];
+            document.querySelectorAll('input[name="filtro"]:checked').forEach(function(checkbox) {
+                filtros.push(checkbox.value);
+            });
+            var termino_busqueda = document.getElementById('buscar').value;
+            sessionStorage.setItem('filtros', JSON.stringify(filtros));
+            sessionStorage.setItem('termino_busqueda', termino_busqueda);
+            event.target.submit();
+        }
+
+        function exportarExcel() {
+            var url = "{% url 'exportar_excel' %}";
+            var filtros = JSON.parse(sessionStorage.getItem('filtros')) || [];
+            var termino_busqueda = sessionStorage.getItem('termino_busqueda') || '';
+            if (filtros.length > 0 || termino_busqueda) {
+                url += "?";
+                if (filtros.length > 0) {
+                    url += "filtro=" + filtros.join("&filtro=");
+                }
+                if (termino_busqueda) {
+                    url += (filtros.length > 0 ? "&" : "") + "buscar=" + encodeURIComponent(termino_busqueda);
+                }
+            }
+            window.location.href = url;
+        }
+
+        function eliminarItem(itemId) {
+        if (window.confirm("¿Seguro que desea borrar en la lista?")) {
+            fetch(`/eliminar/${itemId}/`, {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json','X-CSRFToken': '{{ csrf_token }}'},
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Elemento eliminado correctamente');
+                    window.confirm("Se ha borrado elemento de la lista");
+                    window.location.href = "/lista/";
+                } else {
+                    console.error('Error al eliminar elemento');
+            }
+        })
+            .catch(error => {
+                console.error('Error de red:', error);
+        });
+    }
+}
     </script>
 </body>
 </html>

@@ -2,11 +2,14 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib import messages
-from core.models import Inventario,Responsable,Carrera,Ubicacion
+from .models import Inventario,Responsable,Carrera,Ubicacion
 from django.db.models import Q
 from .forms import ImportForm
 import pandas as pd
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from openpyxl import Workbook
 
 def IngresoUsuario(request):
     if request.method == "POST":
@@ -34,31 +37,15 @@ def logout_view(request):
 
 def lista(request):
     if request.user.is_authenticated:
-        listado = Inventario.objects.all().order_by('-id')
         filtros = request.GET.getlist('filtro')
         termino_busqueda = request.GET.get('buscar', '')
 
-        if termino_busqueda:
-            query = Q()
-            for filtro in filtros:
-                if filtro == 'Etiqueta':
-                    query |= Q(Etiqueta__icontains=termino_busqueda)
-                elif filtro == 'Numero_Serie':
-                    query |= Q(Numero_Serie__icontains=termino_busqueda)
-                elif filtro == 'Descripcion_Equipamiento':
-                    query |= Q(Descripcion_Equipamiento__icontains=termino_busqueda)
-                elif filtro == 'Responsable':
-                    query |= Q(Responsable__icontains=termino_busqueda)
-                elif filtro == 'Carrera':
-                    query |= Q(Carrera__icontains=termino_busqueda)
-                elif filtro == 'Ubicacion':
-                    query |= Q(Ubicacion__icontains=termino_busqueda)
-                elif filtro == 'Digitador':
-                    query |= Q(Digitador__icontains=termino_busqueda)
-            listado = listado.filter(query)
-        
+        # Llama a filtrar_datos() con filtros y término de búsqueda
+        listado = filtrar_datos(request, filtros, termino_busqueda)
 
         context = {
+            'termino_busqueda': termino_busqueda,
+            'filtros': filtros,
             'listado': listado,
             'user': request.user,
         }
@@ -66,6 +53,7 @@ def lista(request):
     else:
         return redirect('/login/')
 
+    
 
 def añadir(request):
     if request.user.is_authenticated:
@@ -286,3 +274,66 @@ def descargar_activos(request):
         return response
     else:
         return redirect('/login/')
+
+def eliminar_elemento(request, elemento_id):
+    elemento = get_object_or_404(Inventario, id=elemento_id)
+    elemento.delete()
+    return JsonResponse({'mensaje': 'El elemento ha sido eliminado correctamente'})
+
+def filtrar_datos(request, filtros, termino_busqueda):
+    listado = Inventario.objects.all().order_by('-id')
+
+    if termino_busqueda:
+        query = Q()
+        if filtros:
+            for filtro in filtros:
+                if filtro == 'Etiqueta':
+                    query |= Q(Etiqueta__icontains=termino_busqueda)
+                elif filtro == 'Numero_Serie':
+                    query |= Q(Numero_Serie__icontains=termino_busqueda)
+                elif filtro == 'Descripcion_Equipamiento':
+                    query |= Q(Descripcion_Equipamiento__icontains=termino_busqueda)
+                elif filtro == 'Responsable':
+                    query |= Q(Responsable__icontains=termino_busqueda)
+                elif filtro == 'Carrera':
+                    query |= Q(Carrera__icontains=termino_busqueda)
+                elif filtro == 'Ubicacion':
+                    query |= Q(Ubicacion__icontains=termino_busqueda)
+                elif filtro == 'Digitador':
+                    query |= Q(Digitador__icontains=termino_busqueda)
+            listado = listado.filter(query)
+        else:
+            query = (Q(Etiqueta__icontains=termino_busqueda) | 
+                     Q(Numero_Serie__icontains=termino_busqueda) | 
+                     Q(Carrera__icontains=termino_busqueda) | 
+                     Q(Ubicacion__icontains=termino_busqueda) | 
+                     Q(Digitador__icontains=termino_busqueda) | 
+                     Q(Observacion__icontains=termino_busqueda) | 
+                     Q(Descripcion_Equipamiento__icontains=termino_busqueda) |
+                     Q(Responsable__icontains=termino_busqueda))
+            listado = listado.filter(query)
+
+    return listado
+
+def exportar_excel(request):
+    if request.user.is_authenticated:
+        filtros = request.GET.getlist('filtro')
+        termino_busqueda = request.GET.get('buscar', '')
+        listado = filtrar_datos(request, filtros, termino_busqueda)
+        
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="ListaFiltrada-"'+termino_busqueda+'".xlsx"'
+
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.append(['Etiqueta', 'Numero_Serie', 'Descripcion_Equipamiento', 'Responsable', 'Carrera', 'Ubicacion', 'Digitador','Observacion'])
+
+        for item in listado:
+            sheet.append([item.Etiqueta, item.Numero_Serie, item.Descripcion_Equipamiento, item.Responsable, item.Carrera, item.Ubicacion, item.Digitador,item.Observacion])
+
+        workbook.save(response)
+        return response
+    else:
+        return redirect('/login/')
+
