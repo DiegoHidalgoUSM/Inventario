@@ -4,22 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h2>Bienvenido, {{ user.username }}</h2>
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Cerrar Sesión</button>
-    </form>
-    <button onclick="window.location.href='{% url 'admin:index'%}'">Ir a Admin</button>
+    <div class="container">
+        <div class="jumbotron mt-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="display-4">Bienvenido, {{ user.username }}</h2>
+                </div>
+                <div class="col text-right">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                    </form>
+                    <button onclick="window.location.href='{% url 'admin:index'%}'" class="btn btn-primary ml-3">Ir a Admin</button>
+                </div>
+            </div>
+        </div>
 
-    <ul>
-        <li><label for="listar">Listar</label><button id="listar" type="button"onclick="window.location.href='{% url 'lista'%}'">Listar</button></li>
-        <li><label for="anadir">Añadir</label><button id="anadir" type="button"onclick="window.location.href='{% url 'añadir'%}'">Añadir</button></li>
-        <li><label for="importar">Importar</label><button id="importar" type="button"onclick="window.location.href='{% url 'importar'%}'" >Importar</button></li>  
-        <li><label for="descargar">Descargar Activos</label><button id="descargar" type="button" onclick="window.location.href='{% url 'descargar_activos'%}'" >Descargar Activos</button></li>
-        
-        
-    </ul>
+        <div class="column align-items-center">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Listar</h5>
+                    <p class="card-text">Lista de activos.</p>
+                    <button id="listar" type="button" onclick="window.location.href='{% url 'lista'%}'" class="btn btn-primary">Listar</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Añadir</h5>
+                    <p class="card-text">Añadir un nuevo activo.</p>
+                    <button id="anadir" type="button" onclick="window.location.href='{% url 'añadir'%}'" class="btn btn-primary">Añadir</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Importar</h5>
+                    <p class="card-text">Importar activos.</p>
+                    <button id="importar" type="button" onclick="window.location.href='{% url 'importar'%}'" class="btn btn-primary">Importar</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Descargar Activos</h5>
+                    <p class="card-text">Descargar todos los activos.</p>
+                    <button id="descargar" type="button" onclick="window.location.href='{% url 'descargar_activos'%}'" class="btn btn-primary">Descargar Activos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

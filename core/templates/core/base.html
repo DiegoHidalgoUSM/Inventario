@@ -1,0 +1,24 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mi Sitio Web{% endblock %}</title>
+    <!-- Agrega tus estilos y scripts aquí -->
+</head>
+<body>
+    <nav>
+        <!-- Navbar -->
+        <ul>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Acerca de</a></li>
+            <!-- Agrega más enlaces según tus necesidades -->
+        </ul>
+    </nav>
+    <div class="content">
+        {% block content %}
+        <!-- Aquí se cargará el contenido específico de cada página -->
+        {% endblock %}
+    </div>
+</body>
+</html>

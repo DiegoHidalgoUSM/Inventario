@@ -4,123 +4,254 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Activos</title>
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .filtroMensaje {
-            cursor: pointer;
-            color: blue;
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     {% if user.is_authenticated %}
-    <h1>Buscar por: {{ termino_busqueda }}</h1>
-        <button class="filtroMensaje" onclick="abrirModal('filtro')">Filtrar</button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <button class="btn btn-outline-secondary" onclick="abrirModal('filtro')">Filtrar</button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/importar/'">Importar</button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/exportar/'">Exportar</button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/añadir/'">Añadir</button>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-        <div id="modalFiltro" class="modal">
+    <div class="container mt-5">
+        <h1 class="text-center">Lista de Activos</h1>
+        <table class="table table-bordered table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>Etiqueta</th>
+                    <th>Número de Serie</th>
+                    <th>Descripción</th>
+                    <th>Responsable</th>
+                    <th>Carrera</th>
+                    <th>Ubicación</th>
+                    <th>Observación</th>
+                    <th>Digitador</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in listado %}
+                <tr>
+                    <td>{{ item.Etiqueta }}</td>
+                    <td>{{ item.Numero_Serie }}</td>
+                    <td>{{ item.Descripcion_Equipamiento }}</td>
+                    <td>{{ item.Responsable }}</td>
+                    <td>{{ item.Carrera }}</td>
+                    <td>{{ item.Ubicacion }}</td>
+                    <td>{{ item.Observacion }}</td>
+                    <td>{{ item.Digitador }}</td>
+                    <td class="text-center">
+                        <button class="btn btn-link p-0" onclick="abrirModalModificar('{{ item.id }}', '{{ item.Etiqueta }}', '{{ item.Numero_Serie }}', '{{ item.Descripcion_Equipamiento }}', '{{ item.Responsable }}', '{{ item.Carrera }}', '{{ item.Ubicacion }}', '{{ item.Observacion }}', '{{ item.Digitador }}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-link p-0" onclick="eliminarItem('{{ item.id }}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="btn btn-primary" onclick="cargarMas()">Listar más</button>
+    </div>
+
+    <!-- Modal para filtros -->
+    <div id="modalFiltro" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <span class="close" onclick="cerrarModal('filtro')">&times;</span>
-                <h2>Filtrar por:</h2>
-                <form id="filtroForm" onsubmit="guardarFiltros(event)">
-                    <div>
-                        <label><input type="checkbox" name="filtro" value="Etiqueta"> Etiqueta</label>
-                        <label><input type="checkbox" name="filtro" value="Numero_Serie"> N° Serie</label>
-                        <label><input type="checkbox" name="filtro" value="Descripcion_Equipamiento"> Descripcion_Equipamiento</label>
-                        <label><input type="checkbox" name="filtro" value="Responsable"> Responsable</label>
-                        <label><input type="checkbox" name="filtro" value="Carrera"> Carrera asociada</label>
-                        <label><input type="checkbox" name="filtro" value="Ubicacion"> Ubicacion</label>
-                        <label><input type="checkbox" name="filtro" value="Digitador"> Digitador</label>
-                    </div>
-                    <div>
-                        <label for="buscar">Buscar:</label>
-                        <input type="text" id="buscar" name="buscar">
-                    </div>
-                    <button type="submit">Aceptar</button>
-                </form>
+                <div class="modal-header">
+                    <h5 class="modal-title">Buscar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="filtroForm" onsubmit="guardarFiltros(event)">
+                        <div class="form-group">
+                            <label for="buscar">Buscar:</label>
+                            <input type="text" class="form-control" id="buscar" name="buscar" value="{{ termino_busqueda }}">
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" name="filtro" value="Responsable" onchange="mostrarSelect(this)" {% if responsable_seleccionado %}checked{% endif %}> Responsable</label>
+                            <select id="selectResponsable" class="form-control" style="display: {% if responsable_seleccionado %}block{% else %}none{% endif %};">
+                                {% for responsable in responsables %}
+                                <option value="{{ responsable.nombre }}" {% if responsable.nombre == responsable_seleccionado %}selected{% endif %}>{{ responsable.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" name="filtro" value="Carrera" onchange="mostrarSelect(this)" {% if carrera_seleccionada %}checked{% endif %}> Carrera asociada</label>
+                            <select id="selectCarrera" class="form-control" style="display: {% if carrera_seleccionada %}block{% else %}none{% endif %};">
+                                {% for carrera in carreras %}
+                                <option value="{{ carrera.nombre }}" {% if carrera.nombre == carrera_seleccionada %}selected{% endif %}>{{ carrera.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" name="filtro" value="Ubicacion" onchange="mostrarSelect(this)" {% if ubicacion_seleccionada %}checked{% endif %}> Ubicacion</label>
+                            <select id="selectUbicacion" class="form-control" style="display: {% if ubicacion_seleccionada %}block{% else %}none{% endif %};">
+                                {% for ubicacion in ubicaciones %}
+                                <option value="{{ ubicacion.nombre }}" {% if ubicacion.nombre == ubicacion_seleccionada %}selected{% endif %}>{{ ubicacion.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
 
-        <a href="#" onclick="exportarExcel()">Descargar Lista Auxiliar</a>
-    
-        <ul>
-            {% if listado %}
-                {% for item in listado %}
-                <li>
-                    <strong>Etiqueta:</strong> {{ item.Etiqueta }}<br>
-                    <strong>Número de Serie:</strong> {{ item.Numero_Serie }}<br>
-                    <strong>Descripción:</strong> {{ item.Descripcion_Equipamiento }}<br>
-                    <strong>Responsable:</strong> {{ item.Responsable }}<br>
-                    <strong>Carrera:</strong> {{ item.Carrera }}<br>
-                    <strong>Ubicación:</strong> {{ item.Ubicacion }}<br>
-                    <strong>Observación:</strong> {{ item.Observacion }}<br>
-                    <strong>Digitador:</strong> {{ item.Digitador }}<br>
-                    <button onclick="modificarItem({{ item.id }})">Modificar</button>
-                    <button onclick="eliminarItem({{ item.id }})">Eliminar</button>
-                    <br><br>
-                </li>
-                {% endfor %}
-            {% else %}
-                <p>La lista está vacía.</p>
-            {% endif %}
-        </ul>
-    {% else %}
-        <p>Debes iniciar sesión para ver esta página.</p>
-    {% endif %}
+    <!-- Modal para modificar -->
+    <div id="modalModificar" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modificar Activo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formModificarActivo" onsubmit="guardarCambios(event)">
+                        {% csrf_token %}
+                        <input type="hidden" id="modificar_id" name="id">
+                        <div class="form-group">
+                            <label for="modificar_etiqueta">Etiqueta</label>
+                            <input type="text" class="form-control" id="modificar_etiqueta" name="Etiqueta" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_numero_serie">Número de Serie</label>
+                            <input type="text" class="form-control" id="modificar_numero_serie" name="Numero_Serie" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_descripcion">Descripción</label>
+                            <input type="text" class="form-control" id="modificar_descripcion" name="Descripcion_Equipamiento" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_responsable">Responsable</label>
+                            <select id="modificar_responsable" class="form-control" name="Responsable" required>
+                                {% for responsable in responsables %}
+                                <option value="{{ responsable.nombre }}">{{ responsable.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_carrera">Carrera</label>
+                            <select id="modificar_carrera" class="form-control" name="Carrera" required>
+                                {% for carrera in carreras %}
+                                <option value="{{ carrera.nombre }}">{{ carrera.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_ubicacion">Ubicación</label>
+                            <select id="modificar_ubicacion" class="form-control" name="Ubicacion" required>
+                                {% for ubicacion in ubicaciones %}
+                                <option value="{{ ubicacion.nombre }}">{{ ubicacion.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_observacion">Observación</label>
+                            <textarea class="form-control" id="modificar_observacion" name="Observacion"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="modificar_digitador">Digitador</label>
+                            <input type="text" class="form-control" id="modificar_digitador" name="Digitador" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
+        function guardarCambios(event) {
+            event.preventDefault();  // Evitar el envío del formulario estándar
+            var form = document.getElementById('formModificarActivo');
+            var data = new FormData(form);
+            var itemId = document.getElementById('modificar_id').value;  // Obtener el ID del elemento a modificar
+            enviarDatosModificacion(data, itemId);  // Pasar el ID del elemento como argumento
+        }
+
+        function enviarDatosModificacion(data, itemId) {
+            fetch(`/modificar-activo/${itemId}/`, {
+                method: 'POST',
+                body: data,
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Mostrar mensaje de éxito
+                    alert('Datos modificados correctamente');
+                    
+                    // Preguntar al usuario si desea recargar la página
+                    if (confirm('¿Desea recargar la página para ver los cambios?')) {
+                        location.reload(); // Recargar la página
+                    } else {
+                        cerrarModal('modificar');
+                        actualizarListado(); // Actualizar el listado después de cerrar el modal
+                    }
+                } else {
+                    console.error('Error al modificar datos');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+        }
+
         function abrirModal(tipo) {
-            document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'block';
+            $('#modal' + capitalizeFirstLetter(tipo)).modal('show');
         }
 
         function cerrarModal(tipo) {
-            document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'none';
+            $('#modal' + capitalizeFirstLetter(tipo)).modal('hide');
         }
 
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
-        function guardarFiltros(event) {
-            event.preventDefault();
-            var filtros = [];
-            document.querySelectorAll('input[name="filtro"]:checked').forEach(function(checkbox) {
-                filtros.push(checkbox.value);
-            });
-            var termino_busqueda = document.getElementById('buscar').value;
-            sessionStorage.setItem('filtros', JSON.stringify(filtros));
-            sessionStorage.setItem('termino_busqueda', termino_busqueda);
-            event.target.submit();
+        function abrirModalModificar(id, etiqueta, numeroSerie, descripcion, responsable, carrera, ubicacion, observacion, digitador) {
+            document.getElementById('modificar_id').value = id;
+            document.getElementById('modificar_etiqueta').value = etiqueta;
+            document.getElementById('modificar_numero_serie').value = numeroSerie;
+            document.getElementById('modificar_descripcion').value = descripcion;
+            document.getElementById('modificar_responsable').value = responsable;
+            document.getElementById('modificar_carrera').value = carrera;
+            document.getElementById('modificar_ubicacion').value = ubicacion;
+            document.getElementById('modificar_observacion').value = observacion;
+            document.getElementById('modificar_digitador').value = digitador;
+            abrirModal('modificar');
         }
 
         function exportarExcel() {
@@ -140,25 +271,123 @@
         }
 
         function eliminarItem(itemId) {
-        if (window.confirm("¿Seguro que desea borrar en la lista?")) {
-            fetch(`/eliminar/${itemId}/`, {
-                method: 'DELETE',
-                headers: {'Content-Type': 'application/json','X-CSRFToken': '{{ csrf_token }}'},
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Elemento eliminado correctamente');
-                    window.confirm("Se ha borrado elemento de la lista");
-                    window.location.href = "/lista/";
-                } else {
-                    console.error('Error al eliminar elemento');
+            if (window.confirm("¿Seguro que desea borrar en la lista?")) {
+                fetch(`/eliminar/${itemId}/`, {
+                    method: 'DELETE',
+                    headers: {'Content-Type': 'application/json','X-CSRFToken': '{{ csrf_token }}'},
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Elemento eliminado correctamente');
+                        window.confirm("Se ha borrado elemento de la lista");
+                        window.location.href = "/lista/";
+                    } else {
+                        console.error('Error al eliminar elemento');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error de red:', error);
+                });
             }
-        })
-            .catch(error => {
-                console.error('Error de red:', error);
+        }
+
+        function mostrarSelect(checkbox) {
+            var selectId = 'select' + checkbox.value;
+            var select = document.getElementById(selectId);
+            if (checkbox.checked) {
+                select.style.display = 'block';
+            } else {
+                select.style.display = 'none';
+            }
+        }
+
+        function guardarFiltros(event) {
+            event.preventDefault();  // Evita el envío del formulario estándar
+            var form = document.getElementById('filtroForm');
+            var data = new FormData(form);
+            var buscar = data.get('buscar');
+            var url = new URL(window.location.href);
+            var params = url.searchParams;
+
+            // Limpiar parámetros anteriores
+            params.delete('filtro');
+            params.delete('buscar');
+            params.delete('Responsable');
+            params.delete('Carrera');
+            params.delete('Ubicacion');
+
+            // Añadir término de búsqueda
+            if (buscar) {
+                params.set('buscar', buscar);
+            }
+
+            // Añadir filtros específicos si están seleccionados
+            if (data.has('filtro')) {
+                data.getAll('filtro').forEach(filtro => {
+                    var select = document.getElementById('select' + filtro);
+                    if (select && select.style.display !== 'none' && select.value) {
+                        params.append(filtro, select.value);
+                    }
+                });
+            }
+
+            // Redirige a la URL con los parámetros de filtro
+            window.location.href = url.toString();
+        }
+
+        function mostrarSeccion2() {
+            document.getElementById('seccion1').classList.remove('active');
+            document.getElementById('seccion2').classList.add('active');
+        }
+
+        function mostrarSeccion1() {
+            document.getElementById('seccion2').classList.remove('active');
+            document.getElementById('seccion1').classList.add('active');
+        }
+
+        document.getElementById('formulario').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir envío automático del formulario
+            
+            // Obtener los valores de número de serie y etiqueta
+            const numeroSerie = document.getElementById('numero_serie').value;
+            const etiqueta = document.getElementById('etiqueta').value;
+            
+            // Realizar la validación
+            if (esRepetido(numeroSerie, 'numero_serie')) {
+                alert('El número de serie ya ha sido utilizado. Por favor, elija otro.');
+                return;
+            }
+            
+            if (esRepetido(etiqueta, 'etiqueta')) {
+                alert('La etiqueta ya ha sido utilizada. Por favor, elija otra.');
+                return;
+            }
+            
+            // Si la validación es exitosa, enviar el formulario
+            this.submit();
         });
-    }
-}
+
+        function esRepetido(valor, campo) {
+            // Obtener todos los elementos del formulario con el mismo valor
+            const elementosConValor = document.querySelectorAll(`input[name=${campo}][value="${valor}"]`);
+            
+            // Si hay más de un elemento con el mismo valor, significa que ya se ha utilizado
+            return elementosConValor.length > 1;
+        }
+
+        function cargarMas() {
+            // Lógica para cargar más elementos en la lista
+            console.log('Cargar más elementos');
+        }
+
+        function actualizarListado() {
+            // Lógica para actualizar el listado después de cerrar el modal
+            console.log('Actualizar listado');
+        }
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endif %}
 </body>
 </html>

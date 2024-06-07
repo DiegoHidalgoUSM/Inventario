@@ -18,8 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from core.views import importar,descargar,exito,añadir_carrera,descargar_activos,añadir_responsable,añadir_ubicacion,error,error_archivo
-from core.views import index,IngresoUsuario,eliminar_elemento,logout_view,lista,añadir,exportar_excel
-
+from core.views import index,IngresoUsuario,eliminar_elemento,logout_view,lista,añadir,exportar_excel,filtrar_datos,modificar_activo
 
 
 urlpatterns = [
@@ -40,5 +39,7 @@ urlpatterns = [
     path("descargar_activos/",descargar_activos,name="descargar_activos"),
     path('exportar-excel/', exportar_excel, name='exportar_excel'),
     path('eliminar/<int:elemento_id>/', eliminar_elemento, name='eliminar_elemento'),
-    path('admin/', admin.site.urls),
-]
+    path('ruta-de-modificacion',modificar_activo, name='modificar_activo'),
+    path('modificar-activo/<int:item_id>/',modificar_activo, name='modificar_activo'),
+    path('filtrar_datos/',filtrar_datos, name='filtrar_datos'),
+    path('admin/', admin.site.urls),]
