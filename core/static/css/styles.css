@@ -44,3 +44,12 @@
     color: red;
     font-weight: bold;
 }
+.modal.active {
+    display: block;
+}
+body.overflow-hidden{
+    overflow-y:hidden;
+}
+.sin-borde {
+    border: none;
+}

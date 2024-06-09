@@ -308,8 +308,6 @@ def eliminar_elemento(request, elemento_id):
     elemento.delete()
     return JsonResponse({'mensaje': 'El elemento ha sido eliminado correctamente'})
 
-from django.db.models import Q
-
 def filtrar_datos(request, termino_busqueda, responsable=None, carrera=None, ubicacion=None):
     queryset = Inventario.objects.all()
     
@@ -343,22 +341,55 @@ def modificar_activo(request, item_id):
 
 def exportar_excel(request):
     if request.user.is_authenticated:
-        filtros = request.GET.getlist('filtro')
+        filtros = {
+            'responsable': request.GET.get('Responsable'),
+            'carrera': request.GET.get('Carrera'),
+            'ubicacion': request.GET.get('Ubicacion'),
+        }
         termino_busqueda = request.GET.get('buscar', '')
-        listado = filtrar_datos(request, filtros, termino_busqueda)
-        
+        listado_filtrado = filtrar_datos(request, termino_busqueda, **filtros)
 
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="ListaFiltrada-"'+termino_busqueda+'".xlsx"'
-
+        # Crea un nuevo libro de trabajo de Excel
         workbook = Workbook()
         sheet = workbook.active
-        sheet.append(['Etiqueta', 'Numero_Serie', 'Descripcion_Equipamiento', 'Responsable', 'Carrera', 'Ubicacion', 'Digitador','Observacion'])
 
-        for item in listado:
-            sheet.append([item.Etiqueta, item.Numero_Serie, item.Descripcion_Equipamiento, item.Responsable, item.Carrera, item.Ubicacion, item.Digitador,item.Observacion])
+        # Define los encabezados de las columnas
+        encabezados = [
+            'Etiqueta',
+            'Numero_Serie',
+            'Descripcion_Equipamiento',
+            'Responsable',
+            'Carrera',
+            'Observacion',
+            'Digitador'
+        ]
 
+        # Escribe los encabezados en la primera fila
+        sheet.append(encabezados)
+
+        # Escribe los datos en las filas siguientes
+        for item in listado_filtrado:
+            fila = [
+                item.Etiqueta,
+                item.Numero_Serie,
+                item.Descripcion_Equipamiento,
+                item.Responsable,
+                item.Carrera,
+                item.Observacion,
+                item.Digitador
+            ]
+            sheet.append(fila)
+
+        # Define el nombre del archivo
+        nombre_archivo = f"ListaFiltrada-{termino_busqueda}.xlsx"
+
+        # Configura la respuesta para descargar el archivo
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+
+        # Guarda el libro de trabajo en el archivo Excel y lo devuelve como una respuesta
         workbook.save(response)
+
         return response
     else:
         return redirect('/login/')
