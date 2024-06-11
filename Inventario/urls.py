@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from core.views import importar,descargar,exito,añadir_carrera,descargar_activos,añadir_responsable,añadir_ubicacion,error,error_archivo
-from core.views import index,IngresoUsuario,eliminar_elemento,logout_view,lista,añadir,exportar_excel,filtrar_datos,modificar_activo
+from core.views import index,IngresoUsuario,eliminar_elemento,logout_view,lista,añadir,exportar_excel,filtrar_datos,modificar_activo,error_Etiqueta,error_numero_serie
 
 
 urlpatterns = [
@@ -35,6 +35,8 @@ urlpatterns = [
     path("añadir_carrera/",añadir_carrera,name="añadir_carrera"),
     path("añadir_ubicacion/",añadir_ubicacion,name="añadir_ubicacion"),
     path("error/",error,name="error"),
+    path("error_etiqueta/",error_Etiqueta,name="error"),
+    path("error_numero_serie/",error_numero_serie,name="error"),
     path("error_archivo/",error_archivo,name="error_archivo"),
     path("descargar_activos/",descargar_activos,name="descargar_activos"),
     path('exportar-excel/', exportar_excel, name='exportar_excel'),

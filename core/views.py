@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from openpyxl import Workbook
 from django.views.decorators.http import require_POST
-import os
+
 
 
 def IngresoUsuario(request):
@@ -41,13 +41,10 @@ def logout_view(request):
 def lista(request):
     if request.user.is_authenticated:
         termino_busqueda = request.GET.get('buscar', '')
-
-        # Obtener valores específicos de filtros adicionales si existen
         responsable = request.GET.get('Responsable', None)
         carrera = request.GET.get('Carrera', None)
         ubicacion = request.GET.get('Ubicacion', None)
 
-        # Llama a filtrar_datos() con los parámetros adecuados
         listado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
         
         responsables = Responsable.objects.all()
@@ -72,25 +69,21 @@ def obtener_listado_actualizado(request):
     listado_actualizado = Inventario.objects.all().values()
     listado_serializado = list(listado_actualizado)
     return JsonResponse(listado_serializado, safe=False)
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Inventario, Responsable, Carrera, Ubicacion
+
 def añadir(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            etiqueta = request.POST.get('etiqueta')
-            numero_serie = request.POST.get('numero_serie')
-            descripcion = request.POST.get('descripcion_equipamiento')
             responsable_id = request.POST.get('responsable')
             carrera_id = request.POST.get('carrera')
             ubicacion_id = request.POST.get('ubicacion')
-            observacion = request.POST.get('observacion')
             nuevo_responsable = request.POST.get('nuevo_responsable')
             nueva_carrera = request.POST.get('nueva_carrera')
             nueva_ubicacion = request.POST.get('nueva_ubicacion')
-            if Inventario.objects.filter(Etiqueta=etiqueta).exists():
-                messages.error(request, 'La etiqueta ya ha sido utilizada. Por favor, elija otra.')
-                return redirect('/añadir/')
-            if Inventario.objects.filter(Numero_Serie=numero_serie).exists():
-                messages.error(request, 'El número de serie ya ha sido utilizado. Por favor, elija otro.')
-                return redirect('/añadir/')
+            
+
             if nuevo_responsable:
                 if Responsable.objects.filter(nombre=nuevo_responsable).exists():
                     messages.error(request, 'El responsable ya existe')
@@ -99,6 +92,7 @@ def añadir(request):
                     responsable = Responsable.objects.create(nombre=nuevo_responsable)
             else:
                 responsable = Responsable.objects.get(id=responsable_id)
+            
 
             if nueva_carrera:
                 if Carrera.objects.filter(nombre=nueva_carrera).exists():
@@ -108,6 +102,7 @@ def añadir(request):
                     carrera = Carrera.objects.create(nombre=nueva_carrera)
             else:
                 carrera = Carrera.objects.get(id=carrera_id)
+            
 
             if nueva_ubicacion:
                 if Ubicacion.objects.filter(nombre=nueva_ubicacion).exists():
@@ -118,17 +113,33 @@ def añadir(request):
             else:
                 ubicacion = Ubicacion.objects.get(id=ubicacion_id)
 
-            nuevo_objeto = Inventario(
-                Etiqueta=etiqueta,
-                Numero_Serie=numero_serie,
-                Descripcion_Equipamiento=descripcion,
-                Responsable=responsable,
-                Carrera=carrera,
-                Ubicacion=ubicacion,
-                Observacion=observacion,
-                Digitador=request.user,
-            )
-            nuevo_objeto.save()
+
+            etiquetas = request.POST.getlist('etiqueta[]')
+            numeros_serie = request.POST.getlist('numero_serie[]')
+            descripciones = request.POST.getlist('descripcion_equipamiento[]')
+            observaciones = request.POST.getlist('observacion[]')
+
+            for etiqueta, numero_serie, descripcion, observacion in zip(etiquetas, numeros_serie, descripciones, observaciones):
+                if Inventario.objects.filter(Etiqueta=etiqueta).exists():
+                    messages.error(request, f'La etiqueta "{etiqueta}" ya ha sido utilizada. Por favor, elija otra.')
+                    return redirect('/añadir/')
+                if Inventario.objects.filter(Numero_Serie=numero_serie).exists():
+                    messages.error(request, f'El número de serie "{numero_serie}" ya ha sido utilizado. Por favor, elija otro.')
+                    return redirect('/añadir/')
+                
+                nuevo_objeto = Inventario(
+                    Etiqueta=etiqueta,
+                    Numero_Serie=numero_serie,
+                    Descripcion_Equipamiento=descripcion,
+                    Responsable=responsable,
+                    Carrera=carrera,
+                    Ubicacion=ubicacion,
+                    Observacion=observacion,
+                    Digitador=request.user,
+                )
+                nuevo_objeto.save()
+
+            messages.success(request, 'Equipamientos añadidos exitosamente.')
             return redirect('/exito/')
         else:
             responsables = Responsable.objects.all()
@@ -140,6 +151,7 @@ def añadir(request):
                 'ubicaciones': ubicaciones,
                 'user': request.user,
             }
+            
             return render(request, "core/añadir.html", context)
     else:
         return redirect('/login/')
@@ -156,8 +168,6 @@ def importar(request):
                 columnas_requeridas = ['Etiqueta', 'Numero_Serie', 'Descripcion_Equipamiento', 'Responsable', 'Carrera', 'Ubicacion']
                 if not set(columnas_requeridas).issubset(df.columns):
                     return redirect("/error/")
-
-                # Validar si las etiquetas y los números de serie ya existen
                 etiquetas_existente = set(Inventario.objects.values_list('Etiqueta', flat=True))
                 numeros_serie_existente = set(Inventario.objects.values_list('Numero_Serie', flat=True))
 
@@ -257,11 +267,12 @@ def añadir_ubicacion(request):
         if request.method == 'POST':
             nombre = request.POST.get('nueva_ubicacion')
             if Ubicacion.objects.filter(nombre=nombre).exists():
-                messages.error(request, 'La ubicación ya existe')
+                messages.ERROR(request, 'La ubicación ya existe')
                 return redirect('/añadir/')
             else:
                 nueva_ubicacion = Ubicacion(nombre=nombre)
                 nueva_ubicacion.save()
+                messages.success(request, 'Ubicación añadida correctamente')
                 
                 return redirect('/añadir/')
     else:
@@ -271,6 +282,16 @@ def error(request):
     if request.user.is_authenticated:
         
         return render(request,"core/error.html", {'user': request.user})
+
+def error_Etiqueta(request):
+    if request.user.is_authenticated:
+        
+        return render(request,"core/error_etiqueta.html", {'user': request.user})
+    
+def error_numero_serie(request):
+    if request.user.is_authenticated:
+        
+        return render(request,"core/error_numero_serie.html", {'user': request.user})
 
 def error_archivo(request):
     if request.user.is_authenticated:
@@ -308,11 +329,9 @@ def eliminar_elemento(request, elemento_id):
     elemento.delete()
     return JsonResponse({'mensaje': 'El elemento ha sido eliminado correctamente'})
 
-from django.db.models import Q
-
 def filtrar_datos(request, termino_busqueda, responsable=None, carrera=None, ubicacion=None):
     queryset = Inventario.objects.all()
-    
+
     if termino_busqueda:
         queryset = queryset.filter(
             Q(Etiqueta__icontains=termino_busqueda) |
@@ -337,28 +356,56 @@ def filtrar_datos(request, termino_busqueda, responsable=None, carrera=None, ubi
     return queryset
 
 
+
 def modificar_activo(request, item_id):
-    # Procesamiento de la vista...
-    return redirect('lista')  # Utiliza el nombre de la ruta correspondiente
+
+    return redirect('lista')
 
 def exportar_excel(request):
     if request.user.is_authenticated:
-        filtros = request.GET.getlist('filtro')
+        responsable = request.GET.get('Responsable')
+        carrera = request.GET.get('Carrera')
+        ubicacion = request.GET.get('Ubicacion')
         termino_busqueda = request.GET.get('buscar', '')
-        listado = filtrar_datos(request, filtros, termino_busqueda)
-        
 
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="ListaFiltrada-"'+termino_busqueda+'".xlsx"'
+        listado_filtrado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
 
         workbook = Workbook()
         sheet = workbook.active
-        sheet.append(['Etiqueta', 'Numero_Serie', 'Descripcion_Equipamiento', 'Responsable', 'Carrera', 'Ubicacion', 'Digitador','Observacion'])
+        encabezados = [
+            'Etiqueta',
+            'Numero_Serie',
+            'Descripcion_Equipamiento',
+            'Responsable',
+            'Carrera',
+            'Ubicacion',
+            'Observacion',
+            'Digitador'
+        ]
 
-        for item in listado:
-            sheet.append([item.Etiqueta, item.Numero_Serie, item.Descripcion_Equipamiento, item.Responsable, item.Carrera, item.Ubicacion, item.Digitador,item.Observacion])
+        sheet.append(encabezados)
+        for item in listado_filtrado:
+            fila = [
+                item.Etiqueta,
+                item.Numero_Serie,
+                item.Descripcion_Equipamiento,
+                item.Responsable,
+                item.Carrera,
+                item.Ubicacion,
+                item.Observacion,
+                item.Digitador
+            ]
+            sheet.append(fila)
 
+        nombre_archivo = "ListaFiltrada.xlsx"
+        if termino_busqueda:
+            nombre_archivo = f"ListaFiltrada-{termino_busqueda}.xlsx"
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
         workbook.save(response)
+
         return response
     else:
         return redirect('/login/')
@@ -367,13 +414,13 @@ def exportar_excel(request):
 
 def modificar_activo(request, item_id):
     if request.method == 'POST':
-        # Recupera el objeto de la base de datos que se va a modificar
+
         try:
             item = Inventario.objects.get(id=item_id)
         except Inventario.DoesNotExist:
-            return redirect('error_page')  # Página de error o redirección
+            return redirect('error_page') 
 
-        # Actualiza los campos del objeto con los datos enviados en el formulario
+
         item.Etiqueta = request.POST.get('Etiqueta')
         item.Numero_Serie = request.POST.get('Numero_Serie')
         item.Descripcion_Equipamiento = request.POST.get('Descripcion_Equipamiento')
@@ -383,10 +430,9 @@ def modificar_activo(request, item_id):
         item.Observacion = request.POST.get('Observacion')
         item.Digitador = request.POST.get('Digitador')
 
-        # Guarda los cambios en la base de datos
+
         item.save()
 
-        # Redirige directamente al usuario a la página de lista después de la modificación
         return redirect('lista')
 
     else:

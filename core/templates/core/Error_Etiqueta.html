@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos adicionales para centrar verticalmente */
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -46,21 +57,10 @@
 </nav>
 
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h1 class="text-center">ERROR en el formato de entrega, revisa que sean las siguientes columnas de Excel:</h1>
-            <ul>
-                <li>Etiqueta</li>
-                <li>Numero_Serie</li>
-                <li>Descripcion_Equipamiento</li>
-                <li>Responsable</li>
-                <li>Carrera</li>
-                <li>Ubicacion</li>
-                <li>Observacion</li>
-            </ul>
-            <div class="text-center">
-                <a href="/home/"><button class="btn btn-primary">Volver a Home</button></a>
-            </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>ERROR en la etiqueta, YA EXISTE un elemento en la lista con esa etiqueta</h1>
+            <a href="/home/" class="btn btn-primary mt-3">Volver a Home</a>
         </div>
     </div>
 </div>

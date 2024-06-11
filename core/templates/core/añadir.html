@@ -4,126 +4,316 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Añadir a la lista</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
 
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .btn-primary{
+            color:white;
+            background:#0060a9;
+            border-color: #0060a9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .espacio{
+            margin-top:100px;
+        }
+        
+        
+        
+        .fondo{
+            background-color: #004B85;
+        }
+        .lista{
+            background-color: white;
+            padding-bottom: 10px;
+        }
+        .btn-outline-primary:hover {
+            color: #070065; 
+        }
+        
+
+    </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Añadir a la lista</h1>
+<body class="fondo">
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
+        <div class="col-3 imagen">
+            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM" onclick="window.location.href='/home/'">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
+                </li>
+                <li class="nav-item mr-auto ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/añadir/'">Añadir</button>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
+                </li>
+                <li class="nav-item mr-2">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="espacio"></div>
+    
+    <div class="container lista">
+        <h1 class="text-center mb-4">Añadir a la lista</h1>
         <form id="formulario" method="POST" action="{% url 'añadir' %}">
             {% csrf_token %}
-            
+
             {% if messages %}
                 {% for message in messages %}
-                    <div class="error-message">{{ message }}</div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 {% endfor %}
             {% endif %}
             
-            <!-- Primera sección: Responsable, Carrera y Ubicación -->
-            <div id="seccion1" class="section active">
-                <ul>
-                    <li>
-                        <label for="responsable">Responsable</label>
-                        <select id="responsable" name="responsable" required>
-                            {% for responsable in responsables %}
-                                <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" onclick="abrirModal('responsable')">Añadir Responsable</button>
-                    </li>
-                    <li>
-                        <label for="carrera">Carrera Asociada</label>
-                        <select id="carrera" name="carrera" required>
-                            {% for carrera in carreras %}
-                                <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" onclick="abrirModal('carrera')">Añadir Carrera</button>
-                    </li>
-                    <li>
-                        <label for="ubicacion">Ubicación</label>
-                        <select id="ubicacion" name="ubicacion" required>
-                            {% for ubicacion in ubicaciones %}
-                                <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" onclick="abrirModal('ubicacion')">Añadir Ubicación</button>
-                    </li>
-                </ul>
-                <button type="button" onclick="mostrarSeccion2()">Siguiente</button>
-            </div>
             
-            <!-- Segunda sección: Activo, N. Serie, Etiqueta y Observación -->
+            <div id="seccion1" class="section active">
+                <div class="mb-3">
+                    <label for="responsable" class="form-label">Responsable</label>
+                    <div class="d-flex">
+                        <select id="responsable" name="responsable" class="form-control mr-2" required>
+                            {% for responsable in responsables %}
+                            <option value="{{ responsable.id }}">{{ responsable.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalResponsable">Añadir Responsable</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="carrera" class="form-label">Carrera Asociada</label>
+                    <div class="d-flex">
+                        <select id="carrera" name="carrera" class="form-control mr-2" required>
+                            {% for carrera in carreras %}
+                            <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalCarrera">Añadir Carrera</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="ubicacion" class="form-label">Ubicación</label>
+                    <div class="d-flex">
+                        <select id="ubicacion" name="ubicacion" class="form-control mr-2" required>
+                            {% for ubicacion in ubicaciones %}
+                            <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalUbicacion">Añadir Ubicación</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary w-100" onclick="mostrarSeccion2()">Siguiente</button>
+            </div>
             <div id="seccion2" class="section">
-                <ul>
-                    <li>
-                        <label for="etiqueta">Etiqueta</label>
-                        <input type="text" id="etiqueta" name="etiqueta" required>
-                    </li>
-                    <li>
-                        <label for="numero_serie">Número de Serie</label>
-                        <input type="text" id="numero_serie" name="numero_serie" required>
-                    </li>
-                    <li>
-                        <label for="descripcion_equipamiento">Descripción del Equipamiento</label>
-                        <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento" required>
-                    </li>
-                    <li>
-                        <label for="observacion">Observación</label>
-                        <input type="text" id="observacion" name="observacion">
-                    </li>
-                    <li>
-                        <label for="digitador">Digitador</label>
-                        <input type="text" id="digitador" name="digitador" required value="{{ user.username }}" readonly>
-                    </li>
-                </ul>
-                <button type="button" onclick="mostrarSeccion1()">Anterior</button>
-                <button type="submit">Añadir</button>
+                <div id="activosContainer">
+                    <div class="activo-item mb-4">
+                        <div class="mb-3">
+                            <label for="descripcion_equipamiento" class="form-label">Nombre del Equipamiento</label>
+                            <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento[]" class="form-control" required>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="añadir_masivo" name="filtro" value="Añadir" onchange="">
+                                <label class="form-check-label" for="añadir_masivo">Añadir masivamente</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="etiqueta" class="form-label">Etiqueta</label>
+                            <input type="text" id="etiqueta" name="etiqueta[]" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero_serie" class="form-label">Número de Serie</label>
+                            <input type="text" id="numero_serie" name="numero_serie[]" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="observacion" class="form-label">Observación</label>
+                            <input type="text" id="observacion" name="observacion[]" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-primary mb-3" onclick="añadirActivo('elemento-')">Agregar otro activo</button>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" onclick="mostrarSeccion1()">Anterior</button>
+                    <button type="submit" class="btn btn-primary">Añadir</button>
+                </div>
             </div>
         </form>
     </div>
 
-    <!-- Modal Responsable -->
-    <div id="modalResponsable" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModal('responsable')">&times;</span>
-            <h2>Añadir Nuevo Responsable</h2>
-            <form id="formResponsable" method="POST" action="{% url 'añadir_responsable' %}">
-                {% csrf_token %}
-                <label for="nuevo_responsable">Nombre del Responsable</label>
-                <input type="text" id="nuevo_responsable" name="nuevo_responsable" required>
-                <button type="submit">Guardar</button>
-            </form>
+
+    <div id="modalResponsable" class="modal fade" tabindex="-1" aria-labelledby="modalResponsableLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalResponsableLabel">Añadir Nuevo Responsable</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formResponsable" method="POST" action="{% url 'añadir_responsable' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nuevo_responsable" class="form-label">Nombre del Responsable</label>
+                            <input type="text" id="nuevo_responsable" name="nuevo_responsable" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Carrera -->
-    <div id="modalCarrera" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModal('carrera')">&times;</span>
-            <h2>Añadir Nueva Carrera</h2>
-            <form id="formCarrera" method="POST" action="{% url 'añadir_carrera' %}">
-                {% csrf_token %}
-                <label for="nueva_carrera">Nombre de la Carrera</label>
-                <input type="text" id="nueva_carrera" name="nueva_carrera" required>
-                <button type="submit">Guardar</button>
-            </form>
+
+    <div id="modalCarrera" class="modal fade" tabindex="-1" aria-labelledby="modalCarreraLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCarreraLabel">Añadir Nueva Carrera</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCarrera" method="POST" action="{% url 'añadir_carrera' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nueva_carrera" class="form-label">Nombre de la Carrera</label>
+                            <input type="text" id="nueva_carrera" name="nueva_carrera" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Ubicación -->
-    <div id="modalUbicacion" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModal('ubicacion')">&times;</span>
-            <h2>Añadir Nueva Ubicación</h2>
-            <form id="formUbicacion" method="POST" action="{% url 'añadir_ubicacion' %}">
-                {% csrf_token %}
-                <label for="nueva_ubicacion">Nueva ubicación</label>
-                <input type="text" id="nueva_ubicacion" name="nueva_ubicacion" required>
-                <button type="submit">Guardar</button>
-            </form>
+
+    <div id="modalUbicacion" class="modal fade" tabindex="-1" aria-labelledby="modalUbicacionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUbicacionLabel">Añadir Nueva Ubicación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formUbicacion" method="POST" action="{% url 'añadir_ubicacion' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nueva_ubicacion" class="form-label">Nueva ubicación</label>
+                            <input type="text" id="nueva_ubicacion" name="nueva_ubicacion" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-    <script src="/static/js/scripts.js"></script>
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        let contadorElementos = 0;
+    
+        function añadirActivo(idElemento) {
+            const container = document.getElementById('activosContainer');
+            const activoItem = document.querySelector('.activo-item').cloneNode(true);
+            const primeraDescripcion = document.getElementById('descripcion_equipamiento').value;
+            activoItem.querySelectorAll('input').forEach(input => {
+                if (input.name === 'descripcion_equipamiento[]') {
+                    input.value = primeraDescripcion;
+                    input.readOnly = true; 
+                } else {
+                    input.value = '';
+                }
+            });
+    
+
+            contadorElementos++;
+    
+
+            activoItem.setAttribute('id', `elemento-${contadorElementos}`);
+    
+
+            const cancelarBtn = document.createElement('button');
+            cancelarBtn.textContent = 'Cancelar';
+            cancelarBtn.type = 'button';
+            cancelarBtn.classList.add('btn', 'btn-outline-danger', 'mb-3');
+            cancelarBtn.onclick = function() {
+                container.removeChild(activoItem); 
+                contadorElementos--; 
+            };
+    
+            activoItem.appendChild(cancelarBtn);
+            container.appendChild(activoItem);
+        }
+    
+        function mostrarSeccion1() {
+                        document.getElementById('seccion1').classList.add('active');
+            document.getElementById('seccion2').classList.remove('active');
+        }
+    
+        function mostrarSeccion2() {
+            document.getElementById('seccion1').classList.remove('active');
+            document.getElementById('seccion2').classList.add('active');
+        }
+    </script>
+    
+    
+    {% endif %}
 </body>
 </html>
+
+

@@ -3,15 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar desde Excel</title>
+    <title>Añadir a la lista</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .bg-custom {
+            background-color:#004B85; 
+        }
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
+
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .espacio{
+            margin-top:100px;
+        }
+        .fondo {
+            background-color: #004B85;
+        }
+        .importar{
+            background-color: white;
+            padding-bottom: 100px;
+            padding-top: 50px;
+        }
+    </style>
 </head>
-<body>
-    <h1>Importar desde Excel</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Importar</button>
-    </form>
-    <a href="/descargar/"><button>Descargar Excel de Ejemplo</button></a>
+<body class="fondo">
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
+        <div class="col-3 imagen">
+            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM" onclick="window.location.href='/home/'">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
+                </li>
+                <li class="nav-item mr-auto ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/añadir/'">Añadir</button>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
+                </li>
+                <li class="nav-item mr-2">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="espacio"></div>
+
+    <div class="container importar">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h1 class="text-center mb-4">Importar desde Excel</h1>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="btn btn-primary w-100 mt-3" type="submit">Importar</button>
+                </form>
+                <a href="/descargar/" class="btn btn-outline-secondary w-100 mt-3">Descargar Excel de Ejemplo</a>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endif %}
 </body>
 </html>

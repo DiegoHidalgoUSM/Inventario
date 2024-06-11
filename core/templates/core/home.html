@@ -4,59 +4,167 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
+
+        
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        .custom-jumbotron {
+            background-color: #004B85; 
+            background-image: url('ruta/a/la/imagen.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            color: #ffffff; 
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .espacio-navbar {
+            margin-top: 50px; 
+        }
+        .btn-primary{
+            color:white;
+            background:#0060a9;
+            border-color: #0060a9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .card{
+            background-color: #cbcbcb;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="jumbotron mt-3">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h2 class="display-4">Bienvenido, {{ user.username }}</h2>
-                </div>
-                <div class="col text-right">
+    <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
+        <div class="col-3 imagen">
+            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
+                </li>
+                <li class="nav-item mr-auto ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/añadir/'">Añadir</button>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
+                </li>
+                <li class="nav-item mr-2">
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                        <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
                     </form>
-                    <button onclick="window.location.href='{% url 'admin:index'%}'" class="btn btn-primary ml-3">Ir a Admin</button>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
+    </nav>
+    <div class="espacio-navbar"></div>
+    <div class="container-fluid p-0">
 
-        <div class="column align-items-center">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Listar</h5>
-                    <p class="card-text">Lista de activos.</p>
-                    <button id="listar" type="button" onclick="window.location.href='{% url 'lista'%}'" class="btn btn-primary">Listar</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Añadir</h5>
-                    <p class="card-text">Añadir un nuevo activo.</p>
-                    <button id="anadir" type="button" onclick="window.location.href='{% url 'añadir'%}'" class="btn btn-primary">Añadir</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Importar</h5>
-                    <p class="card-text">Importar activos.</p>
-                    <button id="importar" type="button" onclick="window.location.href='{% url 'importar'%}'" class="btn btn-primary">Importar</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Descargar Activos</h5>
-                    <p class="card-text">Descargar todos los activos.</p>
-                    <button id="descargar" type="button" onclick="window.location.href='{% url 'descargar_activos'%}'" class="btn btn-primary">Descargar Activos</button>
+
+        <div class="jumbotron mt-3 custom-jumbotron">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h2 class="display-4 text-white">Bienvenido, {{ user.username }}</h2>
+                    </div>
+                    <div class="col text-right">
+                        <button onclick="window.location.href='{% url 'admin:index'%}'" class="btn btn-primary ml-3">Ir a Administrador</button>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        
+        
+    
+        
+
+        <div class="container-fluid mb-3">
+            <div class="row justify-content-center mt-3">
+                <div class="col-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Listado de Activos</h5>
+                            <button id="listar" type="button" onclick="window.location.href='{% url 'lista'%}'" class="btn btn-primary btn-block">Listar activos actuales</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Añadir activos</h5>
+                            <button id="anadir" type="button" onclick="window.location.href='{% url 'añadir'%}'" class="btn btn-primary btn-block">Añadir activo nuevo</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Importar activos</h5>
+                            <button id="importar" type="button" onclick="window.location.href='{% url 'importar'%}'" class="btn btn-primary btn-block">Importar activos nuevos</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Descargar activos</h5>
+                            <button id="descargar" type="button" class="btn btn-primary btn-block">Descargar activos</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Borrar activos</h5>
+                            <button id="borrar" type="button" class="btn btn-primary btn-block">Borrar activos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
     </div>
-
-    <!-- Bootstrap JS (Optional) -->
+            
+        <script>
+            document.getElementById("descargar").addEventListener("click", function() {
+                var confirmacion = confirm("¿Está seguro de que desea descargar los activos?");
+                if (confirmacion) {
+                    window.location.href = '{% url 'descargar_activos'%}';
+                } else {
+                    return;
+                }
+            });
+        </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 </body>
 </html>
