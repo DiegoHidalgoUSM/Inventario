@@ -363,15 +363,27 @@ def modificar_activo(request, item_id):
 
 def exportar_excel(request):
     if request.user.is_authenticated:
+<<<<<<< HEAD
         responsable = request.GET.get('Responsable')
         carrera = request.GET.get('Carrera')
         ubicacion = request.GET.get('Ubicacion')
         termino_busqueda = request.GET.get('buscar', '')
 
         listado_filtrado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
+=======
+        filtros = {
+            'responsable': request.GET.get('Responsable'),
+            'carrera': request.GET.get('Carrera'),
+            'ubicacion': request.GET.get('Ubicacion'),
+        }
+        termino_busqueda = request.GET.get('buscar', '')
+        listado_filtrado = filtrar_datos(request, termino_busqueda, **filtros)
+>>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
 
+        # Crea un nuevo libro de trabajo de Excel
         workbook = Workbook()
         sheet = workbook.active
+<<<<<<< HEAD
         encabezados = [
             'Etiqueta',
             'Numero_Serie',
@@ -404,6 +416,44 @@ def exportar_excel(request):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+=======
+
+        # Define los encabezados de las columnas
+        encabezados = [
+            'Etiqueta',
+            'Numero_Serie',
+            'Descripcion_Equipamiento',
+            'Responsable',
+            'Carrera',
+            'Observacion',
+            'Digitador'
+        ]
+
+        # Escribe los encabezados en la primera fila
+        sheet.append(encabezados)
+
+        # Escribe los datos en las filas siguientes
+        for item in listado_filtrado:
+            fila = [
+                item.Etiqueta,
+                item.Numero_Serie,
+                item.Descripcion_Equipamiento,
+                item.Responsable,
+                item.Carrera,
+                item.Observacion,
+                item.Digitador
+            ]
+            sheet.append(fila)
+
+        # Define el nombre del archivo
+        nombre_archivo = f"ListaFiltrada-{termino_busqueda}.xlsx"
+
+        # Configura la respuesta para descargar el archivo
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+
+        # Guarda el libro de trabajo en el archivo Excel y lo devuelve como una respuesta
+>>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
         workbook.save(response)
 
         return response

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Activos</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <h1>Buscar por: {{ termino_busqueda }}</h1>
+    <button class="filtroMensaje" onclick="abrirModal('filtro')">Filtrar</button>
+
+    <div id="modalFiltro" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal('filtro')">&times;</span>
+            <h2>Buscar</h2>
+            <form id="filtroForm" onsubmit="guardarFiltros(event)">
+                <div>
+                    <label for="buscar">Buscar:</label>
+                    <input type="text" id="buscar" name="buscar" value="{{ termino_busqueda }}">
+                </div>
+                <div>
+                    <label><input type="checkbox" name="filtro" value="Responsable" onchange="mostrarSelect(this)" {% if responsable_seleccionado %}checked{% endif %}> Responsable</label>
+                    <select id="selectResponsable" style="display: {% if responsable_seleccionado %}block{% else %}none{% endif %};">
+                        {% for responsable in responsables %}
+                        <option value="{{ responsable.nombre }}" {% if responsable.nombre == responsable_seleccionado %}selected{% endif %}>{{ responsable.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <label><input type="checkbox" name="filtro" value="Carrera" onchange="mostrarSelect(this)" {% if carrera_seleccionada %}checked{% endif %}> Carrera asociada</label>
+                    <select id="selectCarrera" style="display: {% if carrera_seleccionada %}block{% else %}none{% endif %};">
+                        {% for carrera in carreras %}
+                        <option value="{{ carrera.nombre }}" {% if carrera.nombre == carrera_seleccionada %}selected{% endif %}>{{ carrera.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <label><input type="checkbox" name="filtro" value="Ubicacion" onchange="mostrarSelect(this)" {% if ubicacion_seleccionada %}checked{% endif %}> Ubicacion</label>
+                    <select id="selectUbicacion" style="display: {% if ubicacion_seleccionada %}block{% else %}none{% endif %};">
+                        {% for ubicacion in ubicaciones %}
+                        <option value="{{ ubicacion.nombre }}" {% if ubicacion.nombre == ubicacion_seleccionada %}selected{% endif %}>{{ ubicacion.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit">Aceptar</button>
+            </form>
+        </div>
+    </div>
+
+    <a href="#" onclick="exportarExcel()">Descargar Lista Auxiliar</a>
+
+    <ul>
+        {% if listado %}
+            {% for item in listado %}
+            <li>
+                <strong>Etiqueta:</strong> {{ item.Etiqueta }}<br>
+                <strong>Número de Serie:</strong> {{ item.Numero_Serie }}<br>
+                <strong>Descripción:</strong> {{ item.Descripcion_Equipamiento }}<br>
+                <strong>Responsable:</strong> {{ item.Responsable }}<br>
+                <strong>Carrera:</strong> {{ item.Carrera }}<br>
+                <strong>Ubicación:</strong> {{ item.Ubicacion }}<br>
+                <strong>Observación:</strong> {{ item.Observacion }}<br>
+                <strong>Digitador:</strong> {{ item.Digitador }}<br>
+                <button onclick="abrirModalModificar({{ item.id }}, '{{ item.Etiqueta }}', '{{ item.Numero_Serie }}', '{{ item.Descripcion_Equipamiento }}', '{{ item.Responsable }}', '{{ item.Carrera }}', '{{ item.Ubicacion }}', '{{ item.Observacion }}', '{{ item.Digitador }}')">Modificar</button>
+                <button onclick="eliminarItem({{ item.id }})">Eliminar</button>
+                <br><br>
+            </li>
+            {% endfor %}
+        {% else %}
+            <p>La lista está vacía.</p>
+        {% endif %}
+    </ul>
+    {% else %}
+    <p>Debes iniciar sesión para ver esta página.</p>
+    {% endif %}
+
+    <div id="modalModificar" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal('modificar')">&times;</span>
+            <h2>Modificar Activo</h2>
+            <!-- Agrega este formulario debajo del formulario existente -->
+            <form id="formModificarActivo" onsubmit="guardarCambios(event)">
+                {% csrf_token %}
+                <input type="hidden" id="modificar_id" name="id">
+                <div>
+                    <!-- Campos para modificar -->
+                    <label for="modificar_etiqueta">Etiqueta</label>
+                    <input type="text" id="modificar_etiqueta" name="Etiqueta" required><br>
+                    <label for="modificar_numero_serie">Número de Serie</label>
+                    <input type="text" id="modificar_numero_serie" name="Numero_Serie" required><br>
+                    <label for="modificar_descripcion">Descripción del Equipamiento</label>
+                    <input type="text" id="modificar_descripcion" name="Descripcion_Equipamiento" required><br>
+                    
+                    <label for="modificar_responsable">Responsable</label>
+                    <select id="modificar_responsable" name="Responsable" required>
+                        {% for responsable in responsables %}
+                            <option value="{{ responsable.nombre }}">{{ responsable.nombre }}</option>
+                        {% endfor %}
+                    </select><br>
+                    
+                    <label for="modificar_carrera">Carrera Asociada</label>
+                    <select id="modificar_carrera" name="Carrera" required>
+                        {% for carrera in carreras %}
+                            <option value="{{ carrera.nombre }}">{{ carrera.nombre }}</option>
+                        {% endfor %}
+                    </select><br>
+                    
+                    <label for="modificar_ubicacion">Ubicación</label>
+                    <select id="modificar_ubicacion" name="Ubicacion" required>
+                        {% for ubicacion in ubicaciones %}
+                            <option value="{{ ubicacion.nombre }}">{{ ubicacion.nombre }}</option>
+                        {% endfor %}
+                    </select><br>
+                    
+                    <label for="modificar_observacion">Observación</label>
+                    <input type="text" id="modificar_observacion" name="Observacion"><br>
+                    
+                    <label for="modificar_digitador">Digitador</label>
+                    <input type="text" id="modificar_digitador" name="Digitador" required readonly><br>
+                </div>
+                <button type="submit">Guardar Cambios</button>
+            </form>
+
+        </div>
+    </div>
+    <script src="/static/js/scripts.js"></script>
+</body>
+</html>
