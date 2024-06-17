@@ -273,93 +273,89 @@
     let contadorElementos = 0;
 
     function añadirActivo() {
-        contadorElementos++;
+    contadorElementos++;
 
-        const container = document.getElementById('activosContainer');
+    const container = document.getElementById('activosContainer');
 
-        // Crear una nueva tarjeta (card) de activo
-        const nuevaTarjeta = document.createElement('div');
-        nuevaTarjeta.classList.add('card', 'mb-3');
-        nuevaTarjeta.setAttribute('id', `elemento-${contadorElementos}`);
+    // Crear un nuevo elemento de activo
+    const nuevoActivo = document.createElement('div');
+    nuevoActivo.classList.add('activo-item', 'mb-4');
+    nuevoActivo.setAttribute('id', `elemento-${contadorElementos}`);
 
-        // Contenido HTML de la tarjeta
-        nuevaTarjeta.innerHTML = `
-            <div class="card-body">
-                <h5 class="card-title">Activo ${contadorElementos}</h5>
-                <div class="mb-3">
-                    <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento</label>
-                    <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}" readonly>
-                </div>
-                <div class="mb-3">
-                    <label for="etiqueta_${contadorElementos}" class="form-label">Etiqueta</label>
-                    <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
-                    <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
-                    <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control">
-                </div>
-                <button type="button" class="btn btn-outline-danger" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
-            </div>
-        `;
+    // HTML del nuevo activo
+    nuevoActivo.innerHTML = `
+        <div class="mb-3">
+            <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento</label>
+            <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="etiqueta_${contadorElementos}" class="form-label">Etiqueta</label>
+            <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
+            <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
+            <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control">
+        </div>
+        <button type="button" class="btn btn-outline-danger mb-3" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
+    `;
 
-        // Añadir la nueva tarjeta al contenedor
-        container.appendChild(nuevaTarjeta);
+    // Añadir el nuevo activo al contenedor
+    container.appendChild(nuevoActivo);
 
-        // Enfocar el primer campo de etiqueta de la nueva tarjeta
-        const nuevoEtiquetaInput = nuevaTarjeta.querySelector(`#etiqueta_${contadorElementos}`);
-        if (nuevoEtiquetaInput) {
-            nuevoEtiquetaInput.focus();
-        }
+    // Enfocar el primer campo de etiqueta del nuevo activo
+    const nuevoEtiquetaInput = nuevoActivo.querySelector(`#etiqueta_${contadorElementos}`);
+    if (nuevoEtiquetaInput) {
+        nuevoEtiquetaInput.focus();
     }
+}
 
-    // Agregar evento keydown al contenedor de activos
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('activosContainer');
+// Agregar evento keydown al contenedor de activos
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('activosContainer');
 
-        container.addEventListener('keydown', function(event) {
-            if (event.keyCode === 13) {
-                const focusedInput = document.activeElement;
+    container.addEventListener('keydown', function(event) {
+        if (event.keyCode === 13) {
+            const focusedInput = document.activeElement;
 
-                // Encontrar el activo-item que contiene el input enfocado actualmente
-                const activoItem = focusedInput.closest('.activo-item');
+            // Encontrar el activo-item que contiene el input enfocado actualmente
+            const activoItem = focusedInput.closest('.activo-item');
 
-                if (activoItem) {
-                    const inputs = activoItem.querySelectorAll('input, select');
-                    const currentIndex = Array.from(inputs).indexOf(focusedInput);
+            if (activoItem) {
+                const inputs = activoItem.querySelectorAll('input, select');
+                const currentIndex = Array.from(inputs).indexOf(focusedInput);
 
-                    // Obtener el siguiente campo de entrada
-                    const nextInput = inputs[currentIndex + 1];
+                // Obtener el siguiente campo de entrada
+                const nextInput = inputs[currentIndex + 1];
 
-                    // Si existe el siguiente campo, enfocarlo (mover el cursor)
-                    if (nextInput) {
-                        nextInput.focus();
-                    } else {
-                        // Si no hay siguiente input, añadir otro activo
-                        añadirActivo();
-                        const newInputs = activoItem.nextElementSibling.querySelectorAll('input, select');
-                        if (newInputs.length > 0) {
-                            newInputs[0].focus(); // Enfocar el primer input del nuevo activo agregado
-                        }
+                // Si existe el siguiente campo, enfocarlo (mover el cursor)
+                if (nextInput) {
+                    nextInput.focus();
+                } else {
+                    // Si no hay siguiente input, añadir otro activo
+                    añadirActivo();
+                    const newInputs = activoItem.nextElementSibling.querySelectorAll('input, select');
+                    if (newInputs.length > 0) {
+                        newInputs[0].focus(); // Enfocar el primer input del nuevo activo agregado
                     }
-
-                    event.preventDefault(); // Evitar el comportamiento predeterminado (enviar formulario)
                 }
+
+                event.preventDefault(); // Evitar el comportamiento predeterminado (enviar formulario)
             }
-        });
-    });
-
-    function eliminarActivo(id) {
-        const elemento = document.getElementById(`elemento-${id}`);
-        if (elemento) {
-            elemento.remove();
-            contadorElementos--;
         }
-    }
+    });
+});
 
+function eliminarActivo(id) {
+    const elemento = document.getElementById(`elemento-${id}`);
+    if (elemento) {
+        elemento.remove();
+        contadorElementos--;
+    }
+}
     function mostrarSeccion1() {
         document.getElementById('seccion1').classList.add('active');
         document.getElementById('seccion2').classList.remove('active');

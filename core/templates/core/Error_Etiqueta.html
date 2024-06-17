@@ -23,38 +23,37 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/home/">
-            <i class="fas fa-home ml-2"></i>
-            <span class="font-weight-bold">HOME</span>
-        </a>
-
+    <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
+        <div class="col-3 imagen">
+            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM" onclick="window.location.href='/home/'">
+        </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/importar/">Importar</a>
+    
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
                 </li>
-                <li class="nav-item ml-2">
-                    <a class="nav-link" href="/añadir/">Añadir</a>
+                <li class="nav-item mr-2 ml-2" >
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
                 </li>
-                <li class="nav-item ml-2">
-                    <a class="nav-link" href="/lista/">Listado</a>
+                <li class="nav-item mr-auto ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/añadir/'">Añadir</button>
                 </li>
-                <li class="nav-item ml-2">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
+                </li>
+                <li class="nav-item mr-2">
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                        <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
                     </form>
                 </li>
             </ul>
         </div>
-    </div>
-</nav>
+    </nav>
 
 <div class="container mt-5">
     <div class="row">

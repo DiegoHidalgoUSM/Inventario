@@ -58,7 +58,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
         <div class="col-3 imagen">
-            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM">
+            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM" onclick="window.location.href='/home/'">
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -66,7 +66,10 @@
     
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
+                </li>
+                <li class="nav-item mr-2 ml-2" >
                     <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
                 </li>
                 <li class="nav-item mr-auto ml-2">

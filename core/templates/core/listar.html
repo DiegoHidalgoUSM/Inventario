@@ -6,6 +6,9 @@
     <title>Lista de Activos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- CSS de Bootstrap Icons -->
+
+
     <head>
         <!-- Font Awesome CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -79,6 +82,17 @@
         .fondo{
             background-color: #004B85;
         }
+        .btn-close {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .btn-close:focus {
+            outline: none;
+            box-shadow: none;
+        }
 
     </style>
     
@@ -96,7 +110,10 @@
     
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
+                </li>
+                <li class="nav-item mr-2 ml-2" >
                     <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
                 </li>
                 <li class="nav-item mr-auto ml-2">
@@ -203,10 +220,11 @@
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
-                                <tr>
-                                    <th>Etiqueta</th>
+                                <tr class="text-center" style="background-color: rgb(180, 180, 180);">
+                                    <th></th>
+                                    <th>Activo</th>
                                     <th>Número de Serie</th>
-                                    <th>Descripción</th>
+                                    <th>Etiqueta</th>
                                     <th>Responsable</th>
                                     <th>Carrera</th>
                                     <th>Ubicación</th>
@@ -215,35 +233,103 @@
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            {% for item in listado %}
+                            
                             <tbody>
-                                <tr>
+                                {% for item in listado %}
+                                <tr class="text-center">
+                                    <td style="background-color: rgb(216, 216, 216);"><b>{{ item.id }})  </b></td>
+                                    <td style="background-color: rgb(216, 216, 216);"><b>  {{ item.Descripcion_Equipamiento }}</b></td>
+
                                     <td>{{ item.Etiqueta }}</td>
                                     <td>{{ item.Numero_Serie }}</td>
-                                    <td>{{ item.Descripcion_Equipamiento }}</td>
                                     <td>{{ item.Responsable }}</td>
                                     <td>{{ item.Carrera }}</td>
                                     <td>{{ item.Ubicacion }}</td>
                                     <td>{{ item.Observacion }}</td>
                                     <td>{{ item.Digitador }}</td>
                                     <td class="text-center">
-                                        <button class="btn btn-primary btn-sm" onclick="abrirModalModificar({{ item.id }}, '{{ item.Etiqueta }}', '{{ item.Numero_Serie }}', '{{ item.Descripcion_Equipamiento }}', '{{ item.Responsable }}', '{{ item.Carrera }}', '{{ item.Ubicacion }}', '{{ item.Observacion }}', '{{ item.Digitador }}')">Modificar</button>
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalModificar" onclick="abrirModalModificar({{ item.id }}, '{{ item.Etiqueta }}', '{{ item.Numero_Serie }}', '{{ item.Descripcion_Equipamiento }}', '{{ item.Responsable }}', '{{ item.Carrera }}', '{{ item.Ubicacion }}', '{{ item.Observacion }}', '{{ item.Digitador }}')">Modificar</button>
+
                                         <button class="btn btn-link p-0" onclick="eliminarItem('{{ item.id }}')">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
                                 </tr>
+                                {% endfor %}
                             </tbody>
-                            {% endfor %}
+                            
                         </table>
                     </div>
                     
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="modalModificar" tabindex="-1" aria-labelledby="modalModificarLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalModificarLabel">Modificar Activo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formModificarActivo" onsubmit="guardarCambios(event)">
+                            <input type="hidden" id="modificar_id" name="id">
+                            <div class="mb-3">
+                                <label for="modificar_etiqueta" class="form-label">Etiqueta</label>
+                                <input type="text" class="form-control" id="modificar_etiqueta" name="Etiqueta" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_numero_serie" class="form-label">Número de Serie</label>
+                                <input type="text" class="form-control" id="modificar_numero_serie" name="Numero_Serie" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_descripcion" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" id="modificar_descripcion" name="Descripcion_Equipamiento" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_responsable" class="form-label">Responsable</label>
+                                <select id="modificar_responsable" class="form-select" name="Responsable" required>
+                                    {% for responsable in responsables %}
+                                    <option value="{{ responsable.nombre }}">{{ responsable.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_carrera" class="form-label">Carrera</label>
+                                <select id="modificar_carrera" class="form-select" name="Carrera" required>
+                                    {% for carrera in carreras %}
+                                    <option value="{{ carrera.nombre }}">{{ carrera.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_ubicacion" class="form-label">Ubicación</label>
+                                <select id="modificar_ubicacion" class="form-select" name="Ubicacion" required>
+                                    {% for ubicacion in ubicaciones %}
+                                    <option value="{{ ubicacion.nombre }}">{{ ubicacion.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_observacion" class="form-label">Observación</label>
+                                <textarea class="form-control" id="modificar_observacion" name="Observacion"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificar_digitador" class="form-label">Digitador</label>
+                                <input type="text" class="form-control" id="modificar_digitador" name="Digitador" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
     
         
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
         <!-- CSS de Bootstrap Icons (opcional) -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">
@@ -281,8 +367,8 @@
                 document.getElementById('modificar_ubicacion').value = ubicacion;
                 document.getElementById('modificar_observacion').value = observacion;
                 document.getElementById('modificar_digitador').value = digitador;
-                abrirModal('modificar');
             }
+
             function guardarCambios(event) {
                 event.preventDefault(); 
                 var form = document.getElementById('formModificarActivo');
@@ -446,4 +532,5 @@
 </html>
 
                 
+    
     

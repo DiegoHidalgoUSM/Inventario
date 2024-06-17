@@ -94,7 +94,10 @@
     
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
+                </li>
+                <li class="nav-item mr-2 ml-2" >
                     <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
                 </li>
                 <li class="nav-item mr-auto ml-2">
@@ -202,9 +205,9 @@
                                         <th>
                                             <input type="checkbox" id="checkTodos" onclick="seleccionarTodos(this)"> Todos
                                         </th>
-                                        <th>Etiqueta</th>
+                                        <th>Activo</th>
                                         <th>Número de Serie</th>
-                                        <th>Descripción</th>
+                                        <th>Etiqueta</th>
                                         <th>Responsable</th>
                                         <th>Carrera</th>
                                         <th>Ubicación</th>
@@ -219,9 +222,11 @@
                                         <td>
                                             <input type="checkbox" name="activos_seleccionados" value="{{ item.id }}">
                                         </td>
+
+                                        <td style="background-color: rgb(216, 216, 216);">{{ item.Descripcion_Equipamiento }}</td>
                                         <td>{{ item.Etiqueta }}</td>
                                         <td>{{ item.Numero_Serie }}</td>
-                                        <td>{{ item.Descripcion_Equipamiento }}</td>
+                                        
                                         <td>{{ item.Responsable }}</td>
                                         <td>{{ item.Carrera }}</td>
                                         <td>{{ item.Ubicacion }}</td>
