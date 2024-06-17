@@ -69,9 +69,6 @@ def obtener_listado_actualizado(request):
     listado_actualizado = Inventario.objects.all().values()
     listado_serializado = list(listado_actualizado)
     return JsonResponse(listado_serializado, safe=False)
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Inventario, Responsable, Carrera, Ubicacion
 
 def añadir(request):
     if request.user.is_authenticated:
@@ -83,7 +80,11 @@ def añadir(request):
             nueva_carrera = request.POST.get('nueva_carrera')
             nueva_ubicacion = request.POST.get('nueva_ubicacion')
             
+            # Función para asignar "N/A" si el campo está vacío
+            def asignar_na(valor):
+                return valor if valor else "N/A"
 
+            # Manejo de responsable
             if nuevo_responsable:
                 if Responsable.objects.filter(nombre=nuevo_responsable).exists():
                     messages.error(request, 'El responsable ya existe')
@@ -92,8 +93,8 @@ def añadir(request):
                     responsable = Responsable.objects.create(nombre=nuevo_responsable)
             else:
                 responsable = Responsable.objects.get(id=responsable_id)
-            
 
+            # Manejo de carrera
             if nueva_carrera:
                 if Carrera.objects.filter(nombre=nueva_carrera).exists():
                     messages.error(request, 'La carrera ya existe')
@@ -102,8 +103,8 @@ def añadir(request):
                     carrera = Carrera.objects.create(nombre=nueva_carrera)
             else:
                 carrera = Carrera.objects.get(id=carrera_id)
-            
 
+            # Manejo de ubicación
             if nueva_ubicacion:
                 if Ubicacion.objects.filter(nombre=nueva_ubicacion).exists():
                     messages.error(request, 'La ubicación ya existe')
@@ -113,17 +114,22 @@ def añadir(request):
             else:
                 ubicacion = Ubicacion.objects.get(id=ubicacion_id)
 
-
             etiquetas = request.POST.getlist('etiqueta[]')
             numeros_serie = request.POST.getlist('numero_serie[]')
             descripciones = request.POST.getlist('descripcion_equipamiento[]')
             observaciones = request.POST.getlist('observacion[]')
 
             for etiqueta, numero_serie, descripcion, observacion in zip(etiquetas, numeros_serie, descripciones, observaciones):
-                if Inventario.objects.filter(Etiqueta=etiqueta).exists():
+                # Asignar "N/A" si los campos vienen vacíos
+                etiqueta = asignar_na(etiqueta)
+                numero_serie = asignar_na(numero_serie)
+                descripcion = asignar_na(descripcion)
+                observacion = asignar_na(observacion)
+
+                if etiqueta != "N/A" and Inventario.objects.filter(Etiqueta=etiqueta).exists():
                     messages.error(request, f'La etiqueta "{etiqueta}" ya ha sido utilizada. Por favor, elija otra.')
                     return redirect('/añadir/')
-                if Inventario.objects.filter(Numero_Serie=numero_serie).exists():
+                if numero_serie != "N/A" and Inventario.objects.filter(Numero_Serie=numero_serie).exists():
                     messages.error(request, f'El número de serie "{numero_serie}" ya ha sido utilizado. Por favor, elija otro.')
                     return redirect('/añadir/')
                 
@@ -155,6 +161,7 @@ def añadir(request):
             return render(request, "core/añadir.html", context)
     else:
         return redirect('/login/')
+
 
 def importar(request):
     if request.method == 'POST':
@@ -363,27 +370,16 @@ def modificar_activo(request, item_id):
 
 def exportar_excel(request):
     if request.user.is_authenticated:
-<<<<<<< HEAD
         responsable = request.GET.get('Responsable')
         carrera = request.GET.get('Carrera')
         ubicacion = request.GET.get('Ubicacion')
         termino_busqueda = request.GET.get('buscar', '')
 
         listado_filtrado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
-=======
-        filtros = {
-            'responsable': request.GET.get('Responsable'),
-            'carrera': request.GET.get('Carrera'),
-            'ubicacion': request.GET.get('Ubicacion'),
-        }
-        termino_busqueda = request.GET.get('buscar', '')
-        listado_filtrado = filtrar_datos(request, termino_busqueda, **filtros)
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
 
         # Crea un nuevo libro de trabajo de Excel
         workbook = Workbook()
         sheet = workbook.active
-<<<<<<< HEAD
         encabezados = [
             'Etiqueta',
             'Numero_Serie',
@@ -416,44 +412,6 @@ def exportar_excel(request):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
-=======
-
-        # Define los encabezados de las columnas
-        encabezados = [
-            'Etiqueta',
-            'Numero_Serie',
-            'Descripcion_Equipamiento',
-            'Responsable',
-            'Carrera',
-            'Observacion',
-            'Digitador'
-        ]
-
-        # Escribe los encabezados en la primera fila
-        sheet.append(encabezados)
-
-        # Escribe los datos en las filas siguientes
-        for item in listado_filtrado:
-            fila = [
-                item.Etiqueta,
-                item.Numero_Serie,
-                item.Descripcion_Equipamiento,
-                item.Responsable,
-                item.Carrera,
-                item.Observacion,
-                item.Digitador
-            ]
-            sheet.append(fila)
-
-        # Define el nombre del archivo
-        nombre_archivo = f"ListaFiltrada-{termino_busqueda}.xlsx"
-
-        # Configura la respuesta para descargar el archivo
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
-
-        # Guarda el libro de trabajo en el archivo Excel y lo devuelve como una respuesta
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
         workbook.save(response)
 
         return response
@@ -487,3 +445,45 @@ def modificar_activo(request, item_id):
 
     else:
         return redirect('error_page')
+    
+def borrar_activos(request):
+    if request.user.is_authenticated:
+        termino_busqueda = request.GET.get('buscar', '')
+        responsable = request.GET.get('Responsable', None)
+        carrera = request.GET.get('Carrera', None)
+        ubicacion = request.GET.get('Ubicacion', None)
+
+        listado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
+        
+        responsables = Responsable.objects.all()
+        carreras = Carrera.objects.all()
+        ubicaciones = Ubicacion.objects.all()
+        context = {
+            'responsables': responsables,
+            'carreras': carreras,
+            'ubicaciones': ubicaciones,
+            'termino_busqueda': termino_busqueda,
+            'responsable_seleccionado': responsable,
+            'carrera_seleccionada': carrera,
+            'ubicacion_seleccionada': ubicacion,
+            'listado': listado,
+            'user': request.user,
+        }
+        return render(request, 'core/borrar.html', context)
+    else:
+        return redirect('/login/')
+def borrar_masivo(request):
+    if request.method == 'POST':
+        activos_seleccionados = request.POST.getlist('activos_seleccionados')  # Obtener la lista de activos seleccionados
+        
+        for id_activo in activos_seleccionados:
+            try:
+                activo = Inventario.objects.get(id=id_activo)
+                activo.delete()  # Eliminar el activo de la base de datos
+            except Inventario.DoesNotExist:
+                pass  # Manejar el caso donde el activo no existe (opcional)
+
+        # Después de borrar, redireccionar a la página de listado actualizada
+        return redirect('/lista/')  # Cambia '/lista/' por tu URL de listado actual
+    else:
+        return redirect('/error/')

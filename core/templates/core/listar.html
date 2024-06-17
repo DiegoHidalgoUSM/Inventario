@@ -83,11 +83,7 @@
     </style>
     
 </head>
-<<<<<<< HEAD
 <body class="fondo">
-=======
-<body>
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
     
     {% if user.is_authenticated %}
     <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
@@ -101,7 +97,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-<<<<<<< HEAD
                     <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
                 </li>
                 <li class="nav-item mr-auto ml-2">
@@ -111,14 +106,6 @@
                     <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
                 </li>
                 <li class="nav-item mr-2">
-=======
-                    <button class="btn btn-outline-secondary" onclick="window.location.href='/importar/'">Importar</button>
-                </li>
-                <li class="nav-item">
-                    <button class="btn btn-outline-secondary" onclick="window.location.href='/añadir/'">Añadir</button>
-                </li>
-                <li class="nav-item">
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
@@ -129,7 +116,6 @@
     </nav>
     <div class="espacio"></div>
 
-<<<<<<< HEAD
     
     <div class="container mt-5 contenido-principal">
         <div class="column mt-5"><h1 class="text-center">Lista de Activos</h1></div>
@@ -194,75 +180,10 @@
                                         </div>
                                     </div>
                                 </form>
-=======
-    <div class="container mt-5">
-        <h1 class="text-center">Lista de Activos</h1>
-        <div class="row">
-            <div class="row">
-                <div class="col-md-10 sin-borde"> <!-- Agregamos la clase "sin-borde" aquí -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filtroModal">
-                        Filtro
-                    </button>
-                    <div class="modal fade" id="filtroModal" tabindex="-1" aria-labelledby="filtroModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="filtroModalLabel">Filtro</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- Contenido del formulario de filtrado -->
-                                    <form id="filtroForm" class="mb-4" onsubmit="guardarFiltros(event)">
-                                        <div class="row mt-3">
-                                            <div class="col">
-                                                <div class="form-check mb-2">
-                                                    <input type="checkbox" class="form-check-input" id="chkResponsable" name="filtro" value="Responsable" onchange="mostrarSelect(this)" {% if responsable_seleccionado %}checked{% endif %}>
-                                                    <label class="form-check-label" for="chkResponsable">Responsable</label>
-                                                </div>
-                                                <select id="selectResponsable" class="form-select" style="display: {% if responsable_seleccionado %}block{% else %}none{% endif %};">
-                                                    {% for responsable in responsables %}
-                                                    <option value="{{ responsable.nombre }}" {% if responsable.nombre == responsable_seleccionado %}selected{% endif %}>{{ responsable.nombre }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col">
-                                                <div class="form-check mb-2">
-                                                    <input type="checkbox" class="form-check-input" id="chkCarrera" name="filtro" value="Carrera" onchange="mostrarSelect(this)" {% if carrera_seleccionada %}checked{% endif %}>
-                                                    <label class="form-check-label" for="chkCarrera">Carrera</label>
-                                                </div>
-                                                <select id="selectCarrera" class="form-select" style="display: {% if carrera_seleccionada %}block{% else %}none{% endif %};">
-                                                    {% for carrera in carreras %}
-                                                    <option value="{{ carrera.nombre }}" {% if carrera.nombre == carrera_seleccionada %}selected{% endif %}>{{ carrera.nombre }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col">
-                                                <div class="form-check mb-2">
-                                                    <input type="checkbox" class="form-check-input" id="chkUbicacion" name="filtro" value="Ubicacion" onchange="mostrarSelect(this)" {% if ubicacion_seleccionada %}checked{% endif %}>
-                                                    <label class="form-check-label" for="chkUbicacion">Ubicación</label>
-                                                </div>
-                                                <select id="selectUbicacion" class="form-select" style="display: {% if ubicacion_seleccionada %}block{% else %}none{% endif %};">
-                                                    {% for ubicacion in ubicaciones %}
-                                                    <option value="{{ ubicacion.nombre }}" {% if ubicacion.nombre == ubicacion_seleccionada %}selected{% endif %}>{{ ubicacion.nombre }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-auto">
-                                                <label for="buscar" class="form-label">Buscar:</label>
-                                                <input type="text" class="form-control" id="buscar" name="buscar" value="{{ termino_busqueda }}">
-                                            </div>
-                                            <div class="modal-footer justify-content-end">
-                                                <button type="submit" class="btn btn-primary">Buscar</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                             </div>
                         </div>
                     </div>
                 </div>
-<<<<<<< HEAD
               </div>
               <div class="row justify-content-end">
                 <div class="col-12 d-flex justify-content-end align-items-center">
@@ -278,7 +199,7 @@
         <div class="row">
             <div class="col">
                 <div data-bs-spy="scroll" data-bs-target="#simple-list-example" data-bs-offset="0" data-bs-smooth-scroll="true" class="scrollspy-example full-height" tabindex="0">
-                    {% for item in listado %}
+                    
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -294,6 +215,7 @@
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
+                            {% for item in listado %}
                             <tbody>
                                 <tr>
                                     <td>{{ item.Etiqueta }}</td>
@@ -312,9 +234,10 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            {% endfor %}
                         </table>
                     </div>
-                    {% endfor %}
+                    
                 </div>
             </div>
         </div>
@@ -336,117 +259,6 @@
               target: '#simple-list-example'
             })
         </script>
-=======
-                <div class="col-md-2">
-                    <div class="ms-auto mt-auto">
-                        <a href="{% url 'exportar_excel' %}?buscar={{ termino_busqueda }}" class="btn btn-primary">Exportar a Excel</a>
-                    </div>
-                </div>
-            </div>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Etiqueta</th>
-                    <th>Número de Serie</th>
-                    <th>Descripción</th>
-                    <th>Responsable</th>
-                    <th>Carrera</th>
-                    <th>Ubicación</th>
-                    <th>Observación</th>
-                    <th>Digitador</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in listado %}
-                <tr>
-                    <td>{{ item.Etiqueta }}</td>
-                    <td>{{ item.Numero_Serie }}</td>
-                    <td>{{ item.Descripcion_Equipamiento }}</td>
-                    <td><span>{{ item.Responsable }}</span>
-                    </td>
-                    
-                    <td>{{ item.Carrera }}</td>
-                    <td>{{ item.Ubicacion }}</td>
-                    <td>{{ item.Observacion }}</td>
-                        <td>{{ item.Digitador }}</td>
-                    <td class="text-center">
-                        <button onclick="abrirModalModificar({{ item.id }}, '{{ item.Etiqueta }}', '{{ item.Numero_Serie }}', '{{ item.Descripcion_Equipamiento }}', '{{ item.Responsable }}', '{{ item.Carrera }}', '{{ item.Ubicacion }}', '{{ item.Observacion }}', '{{ item.Digitador }}')">Modificar</button>
-                            
-                            <button class="btn btn-link p-0" onclick="eliminarItem('{{ item.id }}')">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </td>
-                    <div class="{{item.id}}""></div>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div id="modalModificar" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="cerrarModal('modificar')">&times;</span>
-                    <h2>Modificar Activo</h2>
-                    <!-- Agrega este formulario debajo del formulario existente -->
-                    <form id="formModificarActivo" onsubmit="guardarCambios(event)">
-                        {% csrf_token %}
-                        <input type="hidden" id="modificar_id" name="id">
-                        <div>
-                            <!-- Campos para modificar -->
-                            <label for="modificar_etiqueta">Etiqueta</label>
-                            <input type="text" id="modificar_etiqueta" name="Etiqueta" required><br>
-                            <label for="modificar_numero_serie">Número de Serie</label>
-                            <input type="text" id="modificar_numero_serie" name="Numero_Serie" required><br>
-                            <label for="modificar_descripcion">Descripción del Equipamiento</label>
-                            <input type="text" id="modificar_descripcion" name="Descripcion_Equipamiento" required><br>
-                            
-                            <label for="modificar_responsable">Responsable</label>
-                            <select id="modificar_responsable" name="Responsable" required>
-                                {% for responsable in responsables %}
-                                    <option value="{{ responsable.nombre }}">{{ responsable.nombre }}</option>
-                                {% endfor %}
-                            </select><br>
-                            
-                            <label for="modificar_carrera">Carrera Asociada</label>
-                            <select id="modificar_carrera" name="Carrera" required>
-                                {% for carrera in carreras %}
-                                    <option value="{{ carrera.nombre }}">{{ carrera.nombre }}</option>
-                                {% endfor %}
-                            </select><br>
-                            
-                            <label for="modificar_ubicacion">Ubicación</label>
-                            <select id="modificar_ubicacion" name="Ubicacion" required>
-                                {% for ubicacion in ubicaciones %}
-                                    <option value="{{ ubicacion.nombre }}">{{ ubicacion.nombre }}</option>
-                                {% endfor %}
-                            </select><br>
-                            
-                            <label for="modificar_observacion">Observación</label>
-                            <input type="text" id="modificar_observacion" name="Observacion"><br>
-                            
-                            <label for="modificar_digitador">Digitador</label>
-                            <input type="text" id="modificar_digitador" name="Digitador" required readonly><br>
-                        </div>
-                        <button type="submit">Guardar Cambios</button>
-                    </form>
-        
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="cargarMas()">Listar más</button>
-        </div>
-        <!-- CSS de Bootstrap -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- CSS de Bootstrap Icons (opcional) -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">
-
-        <!-- JavaScript de jQuery -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-        <!-- JavaScript de Bootstrap -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
-
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
         <script>
             function abrirModal(tipo) {
                 document.getElementById('modal' + capitalizeFirstLetter(tipo)).style.display = 'block';
@@ -472,19 +284,11 @@
                 abrirModal('modificar');
             }
             function guardarCambios(event) {
-<<<<<<< HEAD
                 event.preventDefault(); 
                 var form = document.getElementById('formModificarActivo');
                 var data = new FormData(form);
                 var itemId = document.getElementById('modificar_id').value;
                 enviarDatosModificacion(data, itemId); 
-=======
-                event.preventDefault();  // Evitar el envío del formulario estándar
-                var form = document.getElementById('formModificarActivo');
-                var data = new FormData(form);
-                var itemId = document.getElementById('modificar_id').value;  // Obtener el ID del elemento a modificar
-                enviarDatosModificacion(data, itemId);  // Pasar el ID del elemento como argumento
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
             }
     
             function enviarDatosModificacion(data, itemId) {
@@ -495,24 +299,12 @@
                 })
                 .then(response => {
                     if (response.ok) {
-<<<<<<< HEAD
                         alert('Datos modificados correctamente');
                         if (confirm('¿Desea recargar la página para ver los cambios?')) {
                             location.reload();
                         } else {
                             cerrarModal('modificar');
                             actualizarListado();
-=======
-                        // Mostrar mensaje de éxito
-                        alert('Datos modificados correctamente');
-                        
-                        // Preguntar al usuario si desea recargar la página
-                        if (confirm('¿Desea recargar la página para ver los cambios?')) {
-                            location.reload(); // Recargar la página
-                        } else {
-                            cerrarModal('modificar');
-                            actualizarListado(); // Actualizar el listado después de cerrar el modal
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                         }
                     } else {
                         console.error('Error al modificar datos');
@@ -568,39 +360,20 @@
                 window.location.href = url;
             }
             function guardarFiltros(event) {
-<<<<<<< HEAD
                 event.preventDefault();  
-=======
-                event.preventDefault();  // Evita el envío del formulario estándar
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                 var form = document.getElementById('filtroForm');
                 var data = new FormData(form);
                 var buscar = data.get('buscar');
                 var url = new URL(window.location.href);
                 var params = url.searchParams;
-<<<<<<< HEAD
-=======
-    
-                // Limpiar parámetros anteriores
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                 params.delete('filtro');
                 params.delete('buscar');
                 params.delete('Responsable');
                 params.delete('Carrera');
                 params.delete('Ubicacion');
-<<<<<<< HEAD
                 if (buscar) {
                     params.set('buscar', buscar);
                 }
-=======
-    
-                // Añadir término de búsqueda
-                if (buscar) {
-                    params.set('buscar', buscar);
-                }
-    
-                // Añadir filtros específicos si están seleccionados
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                 if (data.has('filtro')) {
                     data.getAll('filtro').forEach(filtro => {
                         var select = document.getElementById('select' + filtro);
@@ -609,11 +382,6 @@
                         }
                     });
                 }
-<<<<<<< HEAD
-=======
-    
-                // Redirige a la URL con los parámetros de filtro
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                 window.location.href = url.toString();
             }
     
@@ -628,20 +396,9 @@
             }
     
             document.getElementById('formulario').addEventListener('submit', function(event) {
-<<<<<<< HEAD
                 event.preventDefault(); 
             const numeroSerie = document.getElementById('numero_serie').value;
             const etiqueta = document.getElementById('etiqueta').value;
-=======
-                event.preventDefault(); // Prevenir envío automático del formulario
-                            // Obtener los valores de número de serie y etiqueta
-            const numeroSerie = document.getElementById('numero_serie').value;
-            const etiqueta = document.getElementById('etiqueta').value;
-
-            // Realizar la lógica para agregar el activo
-
-            // Limpia el formulario
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
             document.getElementById('formulario').reset();
         });
 
@@ -665,11 +422,7 @@
             .then(response => {
                 if (response.ok) {
                     console.log('Campo modificado correctamente');
-<<<<<<< HEAD
                     actualizarListado();
-=======
-                    actualizarListado(); // Actualizar el listado después de modificar el campo
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
                 } else {
                     console.error('Error al modificar campo');
                 }
@@ -682,23 +435,10 @@
         }
 
         function actualizarListado() {
-<<<<<<< HEAD
-
-=======
-            // Simplemente recarga la página para actualizar el listado completo
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
             window.location.reload();
         }
 
         function cargarMas() {
-<<<<<<< HEAD
-
-=======
-            // Aquí puedes implementar la lógica para cargar más elementos en la lista
-            // Por ejemplo, mediante AJAX o fetch
-            // Al cargar más elementos, puedes agregarlos a la tabla actual o reemplazarla, dependiendo de tu diseño y preferencias.
-            alert('Implementa la lógica para cargar más elementos en la lista');
->>>>>>> 653ebdd37c0ef76e3e902c5793570cc5f5a8004c
         }
     </script>
     {% endif %}

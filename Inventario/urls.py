@@ -17,8 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.views import importar,descargar,exito,añadir_carrera,descargar_activos,añadir_responsable,añadir_ubicacion,error,error_archivo
-from core.views import index,IngresoUsuario,eliminar_elemento,logout_view,lista,añadir,exportar_excel,filtrar_datos,modificar_activo,error_Etiqueta,error_numero_serie
+from core.views import importar,descargar,exito,añadir_carrera,descargar_activos,añadir_responsable,añadir_ubicacion,error,error_archivo,borrar_masivo
+from core.views import index,IngresoUsuario,eliminar_elemento,logout_view,lista,añadir,exportar_excel,filtrar_datos,modificar_activo,error_Etiqueta,error_numero_serie,borrar_activos
 
 
 urlpatterns = [
@@ -44,4 +44,6 @@ urlpatterns = [
     path('ruta-de-modificacion',modificar_activo, name='modificar_activo'),
     path('modificar-activo/<int:item_id>/',modificar_activo, name='modificar_activo'),
     path('filtrar_datos/',filtrar_datos, name='filtrar_datos'),
+    path('borrar/', borrar_activos, name='borrar_activos'),
+    path('borrar_masivo/', borrar_masivo, name='borrar_masivo'),
     path('admin/', admin.site.urls),]

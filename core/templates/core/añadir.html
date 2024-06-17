@@ -51,8 +51,6 @@
             margin-top:100px;
         }
         
-        
-        
         .fondo{
             background-color: #004B85;
         }
@@ -63,7 +61,10 @@
         .btn-outline-primary:hover {
             color: #070065; 
         }
-        
+        .scrollable-textarea {
+            height: 150px; /* Altura inicial del área de texto */
+            overflow-y: auto; /* Hacer que aparezca la barra de scroll vertical si es necesario */
+        }
 
     </style>
 </head>
@@ -114,8 +115,7 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            
-            
+
             <div id="seccion1" class="section active">
                 <div class="mb-3">
                     <label for="responsable" class="form-label">Responsable</label>
@@ -158,18 +158,18 @@
                         <div class="mb-3">
                             <label for="descripcion_equipamiento" class="form-label">Nombre del Equipamiento</label>
                             <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento[]" class="form-control" required>
-                            <div class="form-check mb-2">
-                                <input type="checkbox" class="form-check-input" id="añadir_masivo" name="filtro" value="Añadir" onchange="">
-                                <label class="form-check-label" for="añadir_masivo">Añadir masivamente</label>
-                            </div>
+                            
+                        
+                            
+                            
                         </div>
                         <div class="mb-3">
                             <label for="etiqueta" class="form-label">Etiqueta</label>
-                            <input type="text" id="etiqueta" name="etiqueta[]" class="form-control" required>
+                            <input type="text" id="etiqueta" name="etiqueta[]" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label for="numero_serie" class="form-label">Número de Serie</label>
-                            <input type="text" id="numero_serie" name="numero_serie[]" class="form-control" required>
+                            <input type="text" id="numero_serie" name="numero_serie[]" class="form-control" >
                         </div>
                         <div class="mb-3">
                             <label for="observacion" class="form-label">Observación</label>
@@ -180,12 +180,18 @@
                 <button type="button" class="btn btn-outline-primary mb-3" onclick="añadirActivo('elemento-')">Agregar otro activo</button>
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" onclick="mostrarSeccion1()">Anterior</button>
-                    <button type="submit" class="btn btn-primary">Añadir</button>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" class="form-check-input" id="checkboxAñadirMasivo">
+                        <label class="form-check-label" for="checkboxAñadirMasivo">Bloquear Botón (para añadir masivamente) </label>
+                    </div>
+                    <button id="btnAñadir" type="submit" class="btn btn-primary">Añadir</button>
+
                 </div>
             </div>
         </form>
     </div>
-
+    
+    
 
     <div id="modalResponsable" class="modal fade" tabindex="-1" aria-labelledby="modalResponsableLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -193,7 +199,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalResponsableLabel">Añadir Nuevo Responsable</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>    
                     </button>
                 </div>
                 <div class="modal-body">
@@ -264,56 +270,118 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
+    let contadorElementos = 0;
 
-        let contadorElementos = 0;
-    
-        function añadirActivo(idElemento) {
-            const container = document.getElementById('activosContainer');
-            const activoItem = document.querySelector('.activo-item').cloneNode(true);
-            const primeraDescripcion = document.getElementById('descripcion_equipamiento').value;
-            activoItem.querySelectorAll('input').forEach(input => {
-                if (input.name === 'descripcion_equipamiento[]') {
-                    input.value = primeraDescripcion;
-                    input.readOnly = true; 
-                } else {
-                    input.value = '';
+    function añadirActivo() {
+        contadorElementos++;
+
+        const container = document.getElementById('activosContainer');
+
+        // Crear una nueva tarjeta (card) de activo
+        const nuevaTarjeta = document.createElement('div');
+        nuevaTarjeta.classList.add('card', 'mb-3');
+        nuevaTarjeta.setAttribute('id', `elemento-${contadorElementos}`);
+
+        // Contenido HTML de la tarjeta
+        nuevaTarjeta.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">Activo ${contadorElementos}</h5>
+                <div class="mb-3">
+                    <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento</label>
+                    <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="etiqueta_${contadorElementos}" class="form-label">Etiqueta</label>
+                    <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
+                    <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
+                    <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control">
+                </div>
+                <button type="button" class="btn btn-outline-danger" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
+            </div>
+        `;
+
+        // Añadir la nueva tarjeta al contenedor
+        container.appendChild(nuevaTarjeta);
+
+        // Enfocar el primer campo de etiqueta de la nueva tarjeta
+        const nuevoEtiquetaInput = nuevaTarjeta.querySelector(`#etiqueta_${contadorElementos}`);
+        if (nuevoEtiquetaInput) {
+            nuevoEtiquetaInput.focus();
+        }
+    }
+
+    // Agregar evento keydown al contenedor de activos
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('activosContainer');
+
+        container.addEventListener('keydown', function(event) {
+            if (event.keyCode === 13) {
+                const focusedInput = document.activeElement;
+
+                // Encontrar el activo-item que contiene el input enfocado actualmente
+                const activoItem = focusedInput.closest('.activo-item');
+
+                if (activoItem) {
+                    const inputs = activoItem.querySelectorAll('input, select');
+                    const currentIndex = Array.from(inputs).indexOf(focusedInput);
+
+                    // Obtener el siguiente campo de entrada
+                    const nextInput = inputs[currentIndex + 1];
+
+                    // Si existe el siguiente campo, enfocarlo (mover el cursor)
+                    if (nextInput) {
+                        nextInput.focus();
+                    } else {
+                        // Si no hay siguiente input, añadir otro activo
+                        añadirActivo();
+                        const newInputs = activoItem.nextElementSibling.querySelectorAll('input, select');
+                        if (newInputs.length > 0) {
+                            newInputs[0].focus(); // Enfocar el primer input del nuevo activo agregado
+                        }
+                    }
+
+                    event.preventDefault(); // Evitar el comportamiento predeterminado (enviar formulario)
                 }
-            });
-    
+            }
+        });
+    });
 
-            contadorElementos++;
-    
+    function eliminarActivo(id) {
+        const elemento = document.getElementById(`elemento-${id}`);
+        if (elemento) {
+            elemento.remove();
+            contadorElementos--;
+        }
+    }
 
-            activoItem.setAttribute('id', `elemento-${contadorElementos}`);
-    
+    function mostrarSeccion1() {
+        document.getElementById('seccion1').classList.add('active');
+        document.getElementById('seccion2').classList.remove('active');
+    }
 
-            const cancelarBtn = document.createElement('button');
-            cancelarBtn.textContent = 'Cancelar';
-            cancelarBtn.type = 'button';
-            cancelarBtn.classList.add('btn', 'btn-outline-danger', 'mb-3');
-            cancelarBtn.onclick = function() {
-                container.removeChild(activoItem); 
-                contadorElementos--; 
-            };
-    
-            activoItem.appendChild(cancelarBtn);
-            container.appendChild(activoItem);
-        }
-    
-        function mostrarSeccion1() {
-                        document.getElementById('seccion1').classList.add('active');
-            document.getElementById('seccion2').classList.remove('active');
-        }
-    
-        function mostrarSeccion2() {
-            document.getElementById('seccion1').classList.remove('active');
-            document.getElementById('seccion2').classList.add('active');
-        }
-    </script>
-    
+    function mostrarSeccion2() {
+        document.getElementById('seccion1').classList.remove('active');
+        document.getElementById('seccion2').classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var checkbox = document.getElementById('checkboxAñadirMasivo');
+        var boton = document.getElementById('btnAñadir');
+
+        checkbox.addEventListener('change', function() {
+            boton.disabled = checkbox.checked; // Deshabilitar el botón si el checkbox está marcado
+        });
+    });
+
+</script>
+
     
     {% endif %}
 </body>
 </html>
-
-
