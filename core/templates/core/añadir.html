@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    
     <style>
         .section {
             display: none;
@@ -65,6 +67,9 @@
             height: 150px; /* Altura inicial del área de texto */
             overflow-y: auto; /* Hacer que aparezca la barra de scroll vertical si es necesario */
         }
+        .espacio-mayor {
+    margin-top: 40px; /* Ejemplo de espacio mayor, ajusta según sea necesario */
+}
 
     </style>
 </head>
@@ -80,7 +85,13 @@
     
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/home/'">Página Principal</button>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
+                </li>
+                <li class="nav-item mr-2 ml-2" >
                     <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
                 </li>
                 <li class="nav-item mr-auto ml-2">
@@ -100,8 +111,9 @@
     </nav>
     <div class="espacio"></div>
     
-    <div class="container lista">
-        <h1 class="text-center mb-4">Añadir a la lista</h1>
+    <div class="container lista mt-4" style="margin-top: 20px;">
+        <div class="espacio-mayor mt-3"><h1 class="text-center mb-4 espacio-mayor">Añadir a la lista</h1></div>
+        
         <form id="formulario" method="POST" action="{% url 'añadir' %}">
             {% csrf_token %}
 
@@ -267,7 +279,7 @@
 
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
     let contadorElementos = 0;

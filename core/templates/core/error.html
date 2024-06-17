@@ -9,10 +9,70 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
+    <style>
+         body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f8f9fa;
+    }
+    .navbar {
+        background-color: #0060a9; /* Color de fondo del navbar */
+    }
+    .navbar .navbar-nav .nav-link {
+        color: white !important; /* Color del texto */
+        background-color: transparent !important; /* Fondo transparente */
+        border: none !important; /* Borde transparente */
+    }
+        .error-container {
+            text-align: center;
+        }
+        .error-container h1 {
+            margin-bottom: 20px;
+        }
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .fondo{
+            background-color: #004B85;
+        }
+        .btn-primary{
+            color:white;
+            background:#0060a9;
+            border-color: #0060a9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+        .error{
+            color: white;
+        }
+        
+    </style>
+</head>
+<body class="fondo">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-custom">
         <div class="col-3 imagen">
             <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM" onclick="window.location.href='/home/'">
         </div>
@@ -23,28 +83,33 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item mr-2 ml-2">
-                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
-                </li>
-                <li class="nav-item mr-2 ml-2" >
-                    <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
-                </li>
-                <li class="nav-item mr-auto ml-2">
-                    <button class="btn btn-link text-gray" onclick="window.location.href='/añadir/'">Añadir</button>
+                    <a class="btn btn-primary text-white" href="/home/">Página Principal</a>
                 </li>
                 <li class="nav-item mr-2 ml-2">
-                    <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
+                    <a class="btn btn-primary text-white" href="/borrar/">Borrar</a>
+                </li>
+                <li class="nav-item mr-2 ml-2" >
+                    <a class="btn btn-primary text-white" href="/importar/">Importar</a>
+                </li>
+                <li class="nav-item mr-auto ml-2">
+                    <a class="btn btn-primary text-white" href="/añadir/">Añadir</a>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <a class="btn btn-primary text-white" href="/lista/">Listado</a>
                 </li>
                 <li class="nav-item mr-2">
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
+                        <button type="submit" class="btn btn-primary text-white">Cerrar Sesión</button>
                     </form>
                 </li>
             </ul>
         </div>
     </nav>
+    
+    
 
-<div class="container mt-5">
+<div class="container error mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="text-center">ERROR en el formato de entrega, revisa que sean las siguientes columnas de Excel:</h1>
@@ -65,7 +130,6 @@
 </div>
 
 <!-- Additional imports -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

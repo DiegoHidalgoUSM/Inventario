@@ -9,8 +9,63 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .error-container {
+            text-align: center;
+        }
+        .error-container h1 {
+            margin-bottom: 20px;
+        }
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .fondo{
+            background-color: #004B85;
+        }
+        .btn-primary{
+            color:white;
+            background:#0060a9;
+            border-color: #0060a9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
+
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+        .error{
+            color: white;
+        }
+        .fondo{
+            background-color: #004B85;
+        }
+    </style>
 </head>
-<body>
+<body class="fondo">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
         <div class="col-3 imagen">
@@ -22,6 +77,9 @@
     
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/home/'">Página Principal</button>
+                </li>
                 <li class="nav-item mr-2 ml-2">
                     <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
                 </li>
@@ -44,7 +102,7 @@
         </div>
     </nav>
 
-<div class="container mt-5">
+<div class="container error mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="text-center">ERROR en el numero de serie, YA EXISTE un elemento en la lista con ese numero de serie</h1>
@@ -56,7 +114,6 @@
 </div>
 
 <!-- Additional imports -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

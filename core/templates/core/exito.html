@@ -22,9 +22,49 @@
             justify-content: center;
             align-items: center;
         }
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .fondo{
+            background-color: #004B85;
+        }
+        .btn-primary{
+            color:white;
+            background:#0060a9;
+            border-color: #0060a9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
+
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+        .exito{
+            color: white;
+        }
+        .fondo{
+            color:white;
+        }
     </style>
 </head>
-<body>
+<body class="fondo">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
         <div class="col-3 imagen">
@@ -36,6 +76,9 @@
     
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/home/'">Página Principal</button>
+                </li>
                 <li class="nav-item mr-2 ml-2">
                     <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
                 </li>
@@ -58,14 +101,13 @@
         </div>
     </nav>
 
-<div class="container mt-5"> <!-- Agregar margen superior para separar del navbar -->
+<div class="container mt-5 exito"> <!-- Agregar margen superior para separar del navbar -->
     <h1 class="text-center">¡Éxito!</h1>
     <div class="text-center">
         <a href="/home/"><button class="btn btn-primary">Volver a Home</button></a>
     </div>
 </div>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- CSS de Bootstrap Icons (opcional) -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/bootstrap-icons.min.css" rel="stylesheet">

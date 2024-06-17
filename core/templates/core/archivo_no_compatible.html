@@ -19,9 +19,80 @@
         .error-container h1 {
             margin-bottom: 20px;
         }
+        .bg-custom {
+            background-color: #0060a9;
+        }
+        .fondo{
+            background-color: #004B85;
+        }
+        .btn-primary{
+            color:white;
+            background:#0060a9;
+            border-color: #0060a9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-link {
+            border: none;
+            text-decoration: none; 
+            color: #cbcbcb; 
+            transition: color 0.3s; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: bold; 
+        }
+
+        .btn-link:hover {
+            color: #ffffff; 
+        }
+
+        .btn-link:focus {
+            outline: none; 
+            box-shadow: none; 
+        }
+        
+        .imagen img {
+            max-width: 100%;
+            height: 50px;
+        }
+        .error-container{
+            color: white;
+        }
     </style>
 </head>
-<body>
+<body class="fondo">
+    <nav class="navbar navbar-expand-lg navbar-light bg-custom fixed-top">
+        <div class="col-3 imagen">
+            <img class="img-fluid" src="https://usm.cl/wp-content/uploads/2020/12/logo-usm_blanco.svg" alt="Logo USM" onclick="window.location.href='/home/'">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/home/'">Página Principal</button>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/borrar/'">Borrar</button>
+                </li>
+                <li class="nav-item mr-2 ml-2" >
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/importar/'">Importar</button>
+                </li>
+                <li class="nav-item mr-auto ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/añadir/'">Añadir</button>
+                </li>
+                <li class="nav-item mr-2 ml-2">
+                    <button class="btn btn-link text-gray" onclick="window.location.href='/lista/'">Listado</button>
+                </li>
+                <li class="nav-item mr-2">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-right">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="error-container">
         <h1>Archivo no COMPATIBLE... ADJUNTA UN ".xlsx"</h1>
         <a href="/home/"><button class="btn btn-primary">Volver a Home</button></a>
