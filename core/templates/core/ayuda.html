@@ -306,8 +306,7 @@
             document.getElementById('seccion1').classList.remove('active');
             document.getElementById('seccion2').classList.add('active');
         }
-    
-        // Capturar el evento de presionar Enter para añadir más activos
+
         document.addEventListener('keydown', function(event) {
             const añadirMasivamenteCheckbox = document.getElementById('añadir_masivo');
             if (event.key === 'Enter' && añadirMasivamenteCheckbox.checked) {
@@ -321,9 +320,9 @@
             
             checkbox.addEventListener('change', function() {
                 if (checkbox.checked) {
-                    boton.disabled = true; // Si el checkbox está marcado, deshabilitar el botón
+                    boton.disabled = true; 
                 } else {
-                    boton.disabled = false; // Si el checkbox no está marcado, habilitar el botón
+                    boton.disabled = false; 
                 }
             });
         });

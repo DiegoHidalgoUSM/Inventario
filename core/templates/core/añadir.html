@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Añadir a la lista</title>
+    <link rel="shortcut icon" href="https://aula.usm.cl/pluginfile.php/1/theme_moove/favicon/1715178503/escudo.ico">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -64,12 +65,16 @@
             color: #070065; 
         }
         .scrollable-textarea {
-            height: 150px; /* Altura inicial del área de texto */
-            overflow-y: auto; /* Hacer que aparezca la barra de scroll vertical si es necesario */
+            height: 150px; 
+            overflow-y: auto; 
         }
         .espacio-mayor {
-    margin-top: 40px; /* Ejemplo de espacio mayor, ajusta según sea necesario */
-}
+            margin-top: 40px;
+        }
+        .input-sm {
+            height: 30px !important; 
+            font-size: 10px; 
+        }
 
     </style>
 </head>
@@ -113,6 +118,7 @@
     
     <div class="container lista mt-4" style="margin-top: 20px;">
         <div class="espacio-mayor mt-3"><h1 class="text-center mb-4 espacio-mayor">Añadir a la lista</h1></div>
+        
         
         <form id="formulario" method="POST" action="{% url 'añadir' %}">
             {% csrf_token %}
@@ -168,25 +174,25 @@
                 <div id="activosContainer">
                     <div class="activo-item mb-4">
                         <div class="mb-3">
-                            <label for="descripcion_equipamiento" class="form-label">Nombre del Equipamiento</label>
+                            <label for="descripcion_equipamiento" class="form-label">Nombre del Equipamiento 1</label>
                             <input type="text" id="descripcion_equipamiento" name="descripcion_equipamiento[]" class="form-control" required>
                             
                         
                             
                             
                         </div>
-                        <div class="mb-3">
-                            <label for="etiqueta" class="form-label">Etiqueta</label>
-                            <input type="text" id="etiqueta" name="etiqueta[]" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="numero_serie" class="form-label">Número de Serie</label>
-                            <input type="text" id="numero_serie" name="numero_serie[]" class="form-control" >
-                        </div>
-                        <div class="mb-3">
-                            <label for="observacion" class="form-label">Observación</label>
-                            <input type="text" id="observacion" name="observacion[]" class="form-control">
-                        </div>
+                        <div class="campo">
+    <label for="etiqueta" class="form-label">Codigo USM</label>
+    <input type="text" id="etiqueta" name="etiqueta[]" class="form-control input-sm">
+</div>
+<div class="campo">
+    <label for="numero_serie" class="form-label">Número de Serie</label>
+    <input type="text" id="numero_serie" name="numero_serie[]" class="form-control input-sm">
+</div>
+<div class="campo">
+    <label for="observacion" class="form-label">Observación</label>
+    <input type="text" id="observacion" name="observacion[]" class="form-control input-sm">
+</div>
                     </div>
                 </div>
                 <button type="button" class="btn btn-outline-primary mb-3" onclick="añadirActivo('elemento-')">Agregar otro activo</button>
@@ -202,6 +208,7 @@
             </div>
         </form>
     </div>
+    
     
     
 
@@ -282,50 +289,50 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
-    let contadorElementos = 0;
+    let contadorElementos = 1;
 
     function añadirActivo() {
     contadorElementos++;
 
     const container = document.getElementById('activosContainer');
 
-    // Crear un nuevo elemento de activo
     const nuevoActivo = document.createElement('div');
     nuevoActivo.classList.add('activo-item', 'mb-4');
     nuevoActivo.setAttribute('id', `elemento-${contadorElementos}`);
 
-    // HTML del nuevo activo
     nuevoActivo.innerHTML = `
-        <div class="mb-3">
-            <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento</label>
-            <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}" readonly>
+    <div id="activosContainer">
+        <div class="activo-item mb-4">
+            <div class="mb-3">
+                <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento ${contadorElementos}</label>
+                <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}" readonly>
+            </div>
+            <div class="campo">
+                <label for="etiqueta_${contadorElementos}" class="form-label">Codigo USM</label>
+                <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control input-sm">
+            </div>
+            <div class="campo">
+                <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
+                <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control input-sm">
+            </div>
+            <div class="campo">
+                <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
+                <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control input-sm">
+            </div>
+            <button type="button" class="btn btn-outline-danger mb-3" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
         </div>
-        <div class="mb-3">
-            <label for="etiqueta_${contadorElementos}" class="form-label">Etiqueta</label>
-            <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
-            <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
-            <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control">
-        </div>
-        <button type="button" class="btn btn-outline-danger mb-3" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
-    `;
+    </div>
+`;
 
-    // Añadir el nuevo activo al contenedor
+
     container.appendChild(nuevoActivo);
 
-    // Enfocar el primer campo de etiqueta del nuevo activo
     const nuevoEtiquetaInput = nuevoActivo.querySelector(`#etiqueta_${contadorElementos}`);
     if (nuevoEtiquetaInput) {
         nuevoEtiquetaInput.focus();
     }
 }
 
-// Agregar evento keydown al contenedor de activos
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('activosContainer');
 
@@ -333,29 +340,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.keyCode === 13) {
             const focusedInput = document.activeElement;
 
-            // Encontrar el activo-item que contiene el input enfocado actualmente
             const activoItem = focusedInput.closest('.activo-item');
 
             if (activoItem) {
                 const inputs = activoItem.querySelectorAll('input, select');
                 const currentIndex = Array.from(inputs).indexOf(focusedInput);
 
-                // Obtener el siguiente campo de entrada
+        
                 const nextInput = inputs[currentIndex + 1];
 
-                // Si existe el siguiente campo, enfocarlo (mover el cursor)
                 if (nextInput) {
                     nextInput.focus();
                 } else {
-                    // Si no hay siguiente input, añadir otro activo
+                    
                     añadirActivo();
                     const newInputs = activoItem.nextElementSibling.querySelectorAll('input, select');
                     if (newInputs.length > 0) {
-                        newInputs[0].focus(); // Enfocar el primer input del nuevo activo agregado
+                        newInputs[0].focus(); 
                     }
                 }
 
-                event.preventDefault(); // Evitar el comportamiento predeterminado (enviar formulario)
+                event.preventDefault(); 
             }
         }
     });
@@ -383,7 +388,7 @@ function eliminarActivo(id) {
         var boton = document.getElementById('btnAñadir');
 
         checkbox.addEventListener('change', function() {
-            boton.disabled = checkbox.checked; // Deshabilitar el botón si el checkbox está marcado
+            boton.disabled = checkbox.checked;
         });
     });
 

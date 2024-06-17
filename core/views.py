@@ -242,7 +242,7 @@ def exito(request):
 def añadir_responsable(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            nombre = request.POST.get('nuevo_responsable')
+            nombre = request.POST.get('nuevo_responsable').strip().upper() 
             if Responsable.objects.filter(nombre=nombre).exists():
                 messages.error(request, 'El responsable ya existe')
                 return redirect('/añadir/')
@@ -257,7 +257,7 @@ def añadir_responsable(request):
 def añadir_carrera(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            nombre = request.POST.get('nueva_carrera')
+            nombre = request.POST.get('nueva_carrera').strip().upper() 
             if Carrera.objects.filter(nombre=nombre).exists():
                 messages.error(request, 'La carrera ya existe')
                 return redirect('/añadir/')
@@ -272,7 +272,7 @@ def añadir_carrera(request):
 def añadir_ubicacion(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            nombre = request.POST.get('nueva_ubicacion')
+            nombre = request.POST.get('nueva_ubicacion').strip().upper() 
             if Ubicacion.objects.filter(nombre=nombre).exists():
                 messages.ERROR(request, 'La ubicación ya existe')
                 return redirect('/añadir/')
@@ -337,7 +337,7 @@ def eliminar_elemento(request, elemento_id):
     return JsonResponse({'mensaje': 'El elemento ha sido eliminado correctamente'})
 
 def filtrar_datos(request, termino_busqueda, responsable=None, carrera=None, ubicacion=None):
-    queryset = Inventario.objects.all()
+    queryset = Inventario.objects.all().order_by('-id')
 
     if termino_busqueda:
         queryset = queryset.filter(
@@ -381,7 +381,7 @@ def exportar_excel(request):
         workbook = Workbook()
         sheet = workbook.active
         encabezados = [
-            'Etiqueta',
+            'Codigo_USM',
             'Numero_Serie',
             'Descripcion_Equipamiento',
             'Responsable',

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Activos</title>
+    <link rel="shortcut icon" href="https://aula.usm.cl/pluginfile.php/1/theme_moove/favicon/1715178503/escudo.ico">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- CSS de Bootstrap Icons -->
@@ -141,6 +142,11 @@
         <div class="column mt-5"><h1 class="text-center">Lista de Activos</h1></div>
 
         <div class="container text-center">
+            <h6>Cantidad de activos listados: <span id="contadorActivos">{{ listado|length }}</span></h6>
+        </div>
+        
+
+        <div class="container text-center">
             <div class="row justify-content-start">
               <div class="col">
                 <div class="row">
@@ -227,10 +233,10 @@
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr class="text-center" style="background-color: rgb(180, 180, 180);">
-                                    <th></th>
+                                    <th>ID</th>
                                     <th>Activo</th>
                                     <th>Número de Serie</th>
-                                    <th>Etiqueta</th>
+                                    <th>Codigo USM</th>
                                     <th>Responsable</th>
                                     <th>Carrera</th>
                                     <th>Ubicación</th>
@@ -281,7 +287,7 @@
                         <form id="formModificarActivo" onsubmit="guardarCambios(event)">
                             <input type="hidden" id="modificar_id" name="id">
                             <div class="mb-3">
-                                <label for="modificar_etiqueta" class="form-label">Etiqueta</label>
+                                <label for="modificar_etiqueta" class="form-label">Codigo USM</label>
                                 <input type="text" class="form-control" id="modificar_etiqueta" name="Etiqueta" required>
                             </div>
                             <div class="mb-3">
@@ -532,6 +538,16 @@
 
         function cargarMas() {
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+        actualizarContadorActivos();
+    });
+
+    function actualizarContadorActivos() {
+        var contador = document.getElementById('contadorActivos');
+        var cantidadActivos = {{ listado|length }};
+        contador.textContent = cantidadActivos;
+    }
     </script>
     {% endif %}
 </body>
