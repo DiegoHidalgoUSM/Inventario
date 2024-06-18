@@ -302,35 +302,36 @@
     nuevoActivo.setAttribute('id', `elemento-${contadorElementos}`);
 
     nuevoActivo.innerHTML = `
-    <div id="activosContainer">
-        <div class="activo-item mb-4">
-            <div class="mb-3">
-                <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento ${contadorElementos}</label>
-                <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}" readonly>
-            </div>
-            <div class="campo">
-                <label for="etiqueta_${contadorElementos}" class="form-label">Codigo USM</label>
-                <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control input-sm">
-            </div>
-            <div class="campo">
-                <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
-                <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control input-sm">
-            </div>
-            <div class="campo">
-                <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
-                <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control input-sm">
-            </div>
-            <button type="button" class="btn btn-outline-danger mb-3" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
+        <div class="mb-3">
+            <label for="descripcion_equipamiento_${contadorElementos}" class="form-label">Nombre del Equipamiento ${contadorElementos}</label>
+            <input type="text" id="descripcion_equipamiento_${contadorElementos}" name="descripcion_equipamiento[]" class="form-control" value="${document.getElementById('descripcion_equipamiento').value}">
         </div>
-    </div>
-`;
-
+        <div class="campo">
+            <label for="etiqueta_${contadorElementos}" class="form-label">Codigo USM</label>
+            <input type="text" id="etiqueta_${contadorElementos}" name="etiqueta[]" class="form-control input-sm">
+        </div>
+        <div class="campo">
+            <label for="numero_serie_${contadorElementos}" class="form-label">Número de Serie</label>
+            <input type="text" id="numero_serie_${contadorElementos}" name="numero_serie[]" class="form-control input-sm">
+        </div>
+        <div class="campo">
+            <label for="observacion_${contadorElementos}" class="form-label">Observación</label>
+            <input type="text" id="observacion_${contadorElementos}" name="observacion[]" class="form-control input-sm">
+        </div>
+        <button type="button" class="btn btn-outline-danger mb-3" onclick="eliminarActivo(${contadorElementos})">Eliminar</button>
+    `;
 
     container.appendChild(nuevoActivo);
 
     const nuevoEtiquetaInput = nuevoActivo.querySelector(`#etiqueta_${contadorElementos}`);
     if (nuevoEtiquetaInput) {
         nuevoEtiquetaInput.focus();
+    }
+
+    // Aplicar readonly al nuevo campo de Nombre del Equipamiento si el checkbox está marcado
+    var nuevoNombreEquipamiento = nuevoActivo.querySelector(`#descripcion_equipamiento_${contadorElementos}`);
+    if (document.getElementById('checkboxAñadirMasivo').checked) {
+        nuevoNombreEquipamiento.readOnly = true;
     }
 }
 
@@ -390,8 +391,18 @@ function eliminarActivo(id) {
 
         checkbox.addEventListener('change', function() {
             boton.disabled = checkbox.checked;
+            toggleNombreEquipamientoReadonly(checkbox.checked);
         });
+
+        function toggleNombreEquipamientoReadonly(isReadonly) {
+            var nombresEquipamiento = document.querySelectorAll('input[name="descripcion_equipamiento[]"]');
+            nombresEquipamiento.forEach(function(input) {
+                input.readOnly = isReadonly;
+            });
+        }
     });
+
+    
 
 </script>
 
