@@ -22,10 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 import secrets
 SECRET_KEY = secrets.token_urlsafe(50)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -112,15 +108,18 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEBUG = True  # Asegúrate de que DEBUG esté en True para el desarrollo
 
-# HSTS
-SECURE_HSTS_SECONDS = 31536000  # 1 año
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# Configuraciones de seguridad para producción
+SECURE_HSTS_SECONDS = 0  # Deshabilitar HSTS para desarrollo
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_SSL_REDIRECT = False  # Deshabilitar redirección HTTPS
+SESSION_COOKIE_SECURE = False  # Deshabilitar cookies seguras para desarrollo
+CSRF_COOKIE_SECURE = False  # Deshabilitar cookies seguras para CSRF en desarrollo
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
