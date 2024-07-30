@@ -140,7 +140,6 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="filtroModalLabel">Filtro</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <form id="filtroForm" class="mb-4" onsubmit="guardarFiltros(event)">
@@ -218,7 +217,6 @@
                                         <th>Ubicación</th>
                                         <th>Observación</th>
                                         <th>Digitador</th>
-                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -237,9 +235,7 @@
                                         <td>{{ item.Ubicacion }}</td>
                                         <td>{{ item.Observacion }}</td>
                                         <td>{{ item.Digitador }}</td>
-                                        <td class="text-center">
-                                            <button class="btn btn-primary btn-sm" onclick="abrirModalModificar({{ item.id }}, '{{ item.Etiqueta }}', '{{ item.Numero_Serie }}', '{{ item.Descripcion_Equipamiento }}', '{{ item.Responsable }}', '{{ item.Carrera }}', '{{ item.Ubicacion }}', '{{ item.Observacion }}', '{{ item.Digitador }}')">Modificar</button>
-                                        </td>
+                                        
                                     </tr>
                                     {% endfor %}
                                 </tbody>

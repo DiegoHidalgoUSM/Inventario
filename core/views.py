@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from openpyxl import Workbook
 from django.views.decorators.http import require_POST
-
+from django.contrib.messages import get_messages
 
 
 def IngresoUsuario(request):
@@ -24,7 +24,7 @@ def IngresoUsuario(request):
             return redirect('/')
         else:
             messages.error(request, 'Nombre de usuario o contraseña no válidos')
-            return redirect('/login/') 
+            return redirect('/login/')
     else:
         return render(request,"core/login.html")
 
@@ -35,6 +35,9 @@ def index(request):
         return redirect('/login/')
 
 def logout_view(request):
+    storage = get_messages(request)
+    for _ in storage:
+        pass
     auth_logout(request)
     return redirect('/login/')
 
@@ -46,7 +49,7 @@ def lista(request):
         ubicacion = request.GET.get('Ubicacion', None)
 
         listado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
-        
+
         responsables = Responsable.objects.all()
         carreras = Carrera.objects.all()
         ubicaciones = Ubicacion.objects.all()
@@ -79,7 +82,7 @@ def añadir(request):
             nuevo_responsable = request.POST.get('nuevo_responsable')
             nueva_carrera = request.POST.get('nueva_carrera')
             nueva_ubicacion = request.POST.get('nueva_ubicacion')
-            
+
             # Función para asignar "N/A" si el campo está vacío
             def asignar_na(valor):
                 return valor if valor else "N/A"
@@ -132,7 +135,7 @@ def añadir(request):
                 if numero_serie != "N/A" and Inventario.objects.filter(Numero_Serie=numero_serie).exists():
                     messages.error(request, f'El número de serie "{numero_serie}" ya ha sido utilizado. Por favor, elija otro.')
                     return redirect('/añadir/')
-                
+
                 nuevo_objeto = Inventario(
                     Etiqueta=etiqueta,
                     Numero_Serie=numero_serie,
@@ -148,16 +151,16 @@ def añadir(request):
             messages.success(request, 'Equipamientos añadidos exitosamente.')
             return redirect('/exito/')
         else:
-            responsables = Responsable.objects.all()
-            carreras = Carrera.objects.all()
-            ubicaciones = Ubicacion.objects.all()
+            responsables = Responsable.objects.all().all().order_by('nombre')
+            carreras = Carrera.objects.all().all().order_by('nombre')
+            ubicaciones = Ubicacion.objects.all().all().order_by('nombre')
             context = {
                 'responsables': responsables,
                 'carreras': carreras,
                 'ubicaciones': ubicaciones,
                 'user': request.user,
             }
-            
+
             return render(request, "core/añadir.html", context)
     else:
         return redirect('/login/')
@@ -171,7 +174,7 @@ def importar(request):
             if archivo.name.endswith('.xlsx'):
                 df = pd.read_excel(archivo)
                 df.fillna("N/A", inplace=True)
-                
+
                 columnas_requeridas = ['Etiqueta', 'Numero_Serie', 'Descripcion_Equipamiento', 'Responsable', 'Carrera', 'Ubicacion']
                 if not set(columnas_requeridas).issubset(df.columns):
                     return redirect("/error/")
@@ -182,26 +185,25 @@ def importar(request):
                     etiqueta = row['Etiqueta']
                     numero_serie = row['Numero_Serie']
 
-                    if etiqueta in etiquetas_existente:
+                    if etiqueta != "N/A" and etiqueta in etiquetas_existente:
                         return redirect("/error_etiqueta/")
-                    if numero_serie in numeros_serie_existente:
+                    if numero_serie != "N/A" and numero_serie in numeros_serie_existente:
                         return redirect("/error_numero_serie/")
 
                     responsable, creado_responsable = Responsable.objects.get_or_create(nombre=row.Responsable)
                     carrera, creado_carrera = Carrera.objects.get_or_create(nombre=row.Carrera)
                     ubicacion, creado_ubicacion = Ubicacion.objects.get_or_create(nombre=row.Ubicacion)
-                    objeto, creado = Inventario.objects.get_or_create(
+                    Inventario.objects.create(
                         Etiqueta=etiqueta,
                         Numero_Serie=numero_serie,
                         Descripcion_Equipamiento=row['Descripcion_Equipamiento'],
                         Responsable=responsable.nombre,
                         Carrera=carrera.nombre,
                         Ubicacion=ubicacion.nombre,
-                        Observacion=row['Observacion'],
-                        Digitador=request.user.username 
+                        Observacion=row.get('Observacion', 'N/A'),
+                        Digitador=request.user.username
                     )
-                    if creado:
-                        objeto.save()
+
 
                 return redirect("/exito/")
             else:
@@ -232,17 +234,17 @@ def descargar(request):
     else:
         return redirect('/login/')
 
-    
+
 def exito(request):
     if request.user.is_authenticated:
         return render(request,"core/exito.html", {'user': request.user})
     else:
         return redirect('/login/')
-    
+
 def añadir_responsable(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            nombre = request.POST.get('nuevo_responsable').strip().upper() 
+            nombre = request.POST.get('nuevo_responsable').strip().upper()
             if Responsable.objects.filter(nombre=nombre).exists():
                 messages.error(request, 'El responsable ya existe')
                 return redirect('/añadir/')
@@ -257,7 +259,7 @@ def añadir_responsable(request):
 def añadir_carrera(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            nombre = request.POST.get('nueva_carrera').strip().upper() 
+            nombre = request.POST.get('nueva_carrera').strip().upper()
             if Carrera.objects.filter(nombre=nombre).exists():
                 messages.error(request, 'La carrera ya existe')
                 return redirect('/añadir/')
@@ -272,39 +274,39 @@ def añadir_carrera(request):
 def añadir_ubicacion(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            nombre = request.POST.get('nueva_ubicacion').strip().upper() 
+            nombre = request.POST.get('nueva_ubicacion').strip().upper()
             if Ubicacion.objects.filter(nombre=nombre).exists():
-                messages.ERROR(request, 'La ubicación ya existe')
+                messages.error(request, 'La ubicación ya existe')
                 return redirect('/añadir/')
             else:
                 nueva_ubicacion = Ubicacion(nombre=nombre)
                 nueva_ubicacion.save()
                 messages.success(request, 'Ubicación añadida correctamente')
-                
+
                 return redirect('/añadir/')
     else:
         return redirect('/login/')
-    
+
 def error(request):
     if request.user.is_authenticated:
-        
+
         return render(request,"core/error.html", {'user': request.user})
 
 def error_Etiqueta(request):
     if request.user.is_authenticated:
-        
-        return render(request,"core/error_etiqueta.html", {'user': request.user})
-    
+
+        return render(request,"core/Error_Etiqueta.html", {'user': request.user})
+
 def error_numero_serie(request):
     if request.user.is_authenticated:
-        
+
         return render(request,"core/error_numero_serie.html", {'user': request.user})
 
 def error_archivo(request):
     if request.user.is_authenticated:
-        
+
         return render(request,"core/archivo_no_compatible.html", {'user': request.user})
-    
+
 
 def descargar_activos(request):
     if request.user.is_authenticated:
@@ -377,7 +379,6 @@ def exportar_excel(request):
 
         listado_filtrado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
 
-        # Crea un nuevo libro de trabajo de Excel
         workbook = Workbook()
         sheet = workbook.active
         encabezados = [
@@ -426,7 +427,7 @@ def modificar_activo(request, item_id):
         try:
             item = Inventario.objects.get(id=item_id)
         except Inventario.DoesNotExist:
-            return redirect('error_page') 
+            return redirect('error_page')
 
 
         item.Etiqueta = request.POST.get('Etiqueta')
@@ -445,7 +446,7 @@ def modificar_activo(request, item_id):
 
     else:
         return redirect('error_page')
-    
+
 def borrar_activos(request):
     if request.user.is_authenticated:
         termino_busqueda = request.GET.get('buscar', '')
@@ -454,7 +455,7 @@ def borrar_activos(request):
         ubicacion = request.GET.get('Ubicacion', None)
 
         listado = filtrar_datos(request, termino_busqueda, responsable, carrera, ubicacion)
-        
+
         responsables = Responsable.objects.all()
         carreras = Carrera.objects.all()
         ubicaciones = Ubicacion.objects.all()
@@ -474,16 +475,15 @@ def borrar_activos(request):
         return redirect('/login/')
 def borrar_masivo(request):
     if request.method == 'POST':
-        activos_seleccionados = request.POST.getlist('activos_seleccionados')  # Obtener la lista de activos seleccionados
-        
+        activos_seleccionados = request.POST.getlist('activos_seleccionados')
+
         for id_activo in activos_seleccionados:
             try:
                 activo = Inventario.objects.get(id=id_activo)
-                activo.delete()  # Eliminar el activo de la base de datos
+                activo.delete()
             except Inventario.DoesNotExist:
-                pass  # Manejar el caso donde el activo no existe (opcional)
+                pass
 
-        # Después de borrar, redireccionar a la página de listado actualizada
-        return redirect('/lista/')  # Cambia '/lista/' por tu URL de listado actual
+        return redirect('/lista/')
     else:
         return redirect('/error/')
